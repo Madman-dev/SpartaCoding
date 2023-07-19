@@ -14,24 +14,29 @@ class Calculator {
         self.numbers = numbers
     }
     
-    func subtract(_ firstNumber: Int, by secondNumber: Int) {
+    func subtract(_ firstNumber: Double, by secondNumber: Double) -> Double {
         let result = firstNumber - secondNumber
-        print("결과 값은 \(result)입니다.")
+        return result
     }
     
-    func add(_ firstNumber: Int, to secondNumber: Int) {
+    func add(_ firstNumber: Double, to secondNumber: Double) -> Double {
         let result = firstNumber + secondNumber
-        print("결과 값은 \(result)입니다.")
+        return result
     }
     
-    func divide(_ firstNumber: Int, by secondNumber: Int) {
+    func divide(_ firstNumber: Double, by secondNumber: Double) -> Double {
         let result = firstNumber / secondNumber
-        print("결과 값은 \(result)입니다.")
+        return result
     }
 
-    func multiply(_ firstNumber: Int, by secondNumber: Int) {
+    func multiply(_ firstNumber: Double, by secondNumber: Double) -> Double {
         let result = firstNumber * secondNumber
-        print("결과 값은 \(result)입니다.")
+        return result
+    }
+    
+    func findRemainder(_ firstNumber: Int, with secondNumber: Int) -> Int {
+        let result = firstNumber % secondNumber
+        return result
     }
 }
 
