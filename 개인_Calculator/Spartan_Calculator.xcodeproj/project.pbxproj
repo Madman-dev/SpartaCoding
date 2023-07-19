@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		BDF2646D2A67728E004CF995 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF2646C2A67728E004CF995 /* main.swift */; };
 		BDF264742A677314004CF995 /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF264732A677314004CF995 /* Calculator.swift */; };
+		BDF264762A6783BC004CF995 /* AddOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF264752A6783BC004CF995 /* AddOperator.swift */; };
+		BDF264782A6783D5004CF995 /* SubtractOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF264772A6783D5004CF995 /* SubtractOperator.swift */; };
+		BDF2647A2A6783FB004CF995 /* MultiplicationOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF264792A6783FB004CF995 /* MultiplicationOperator.swift */; };
+		BDF2647C2A678418004CF995 /* DivisionOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF2647B2A678418004CF995 /* DivisionOperator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,6 +31,10 @@
 		BDF264692A67728E004CF995 /* Spartan_Calculator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Spartan_Calculator; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDF2646C2A67728E004CF995 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		BDF264732A677314004CF995 /* Calculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculator.swift; sourceTree = "<group>"; };
+		BDF264752A6783BC004CF995 /* AddOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOperator.swift; sourceTree = "<group>"; };
+		BDF264772A6783D5004CF995 /* SubtractOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtractOperator.swift; sourceTree = "<group>"; };
+		BDF264792A6783FB004CF995 /* MultiplicationOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplicationOperator.swift; sourceTree = "<group>"; };
+		BDF2647B2A678418004CF995 /* DivisionOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DivisionOperator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +69,10 @@
 			children = (
 				BDF2646C2A67728E004CF995 /* main.swift */,
 				BDF264732A677314004CF995 /* Calculator.swift */,
+				BDF264752A6783BC004CF995 /* AddOperator.swift */,
+				BDF264772A6783D5004CF995 /* SubtractOperator.swift */,
+				BDF264792A6783FB004CF995 /* MultiplicationOperator.swift */,
+				BDF2647B2A678418004CF995 /* DivisionOperator.swift */,
 			);
 			path = Spartan_Calculator;
 			sourceTree = "<group>";
@@ -123,7 +135,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDF2647C2A678418004CF995 /* DivisionOperator.swift in Sources */,
 				BDF2646D2A67728E004CF995 /* main.swift in Sources */,
+				BDF264782A6783D5004CF995 /* SubtractOperator.swift in Sources */,
+				BDF2647A2A6783FB004CF995 /* MultiplicationOperator.swift in Sources */,
+				BDF264762A6783BC004CF995 /* AddOperator.swift in Sources */,
 				BDF264742A677314004CF995 /* Calculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
