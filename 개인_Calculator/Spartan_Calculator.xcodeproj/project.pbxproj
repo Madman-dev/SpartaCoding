@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BD7C02E92A690B4C0082A49C /* AbstractOperater.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7C02E82A690B4C0082A49C /* AbstractOperater.swift */; };
 		BDF2646D2A67728E004CF995 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF2646C2A67728E004CF995 /* main.swift */; };
 		BDF264742A677314004CF995 /* Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF264732A677314004CF995 /* Calculator.swift */; };
 		BDF264762A6783BC004CF995 /* AddOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF264752A6783BC004CF995 /* AddOperator.swift */; };
@@ -28,6 +29,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BD7C02E82A690B4C0082A49C /* AbstractOperater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractOperater.swift; sourceTree = "<group>"; };
 		BDF264692A67728E004CF995 /* Spartan_Calculator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Spartan_Calculator; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDF2646C2A67728E004CF995 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		BDF264732A677314004CF995 /* Calculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculator.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 			children = (
 				BDF2646C2A67728E004CF995 /* main.swift */,
 				BDF264732A677314004CF995 /* Calculator.swift */,
+				BD7C02E82A690B4C0082A49C /* AbstractOperater.swift */,
 				BDF264752A6783BC004CF995 /* AddOperator.swift */,
 				BDF264772A6783D5004CF995 /* SubtractOperator.swift */,
 				BDF264792A6783FB004CF995 /* MultiplicationOperator.swift */,
@@ -135,6 +138,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD7C02E92A690B4C0082A49C /* AbstractOperater.swift in Sources */,
 				BDF2647C2A678418004CF995 /* DivisionOperator.swift in Sources */,
 				BDF2646D2A67728E004CF995 /* main.swift in Sources */,
 				BDF264782A6783D5004CF995 /* SubtractOperator.swift in Sources */,

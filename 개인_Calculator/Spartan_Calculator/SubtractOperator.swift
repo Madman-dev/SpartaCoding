@@ -7,9 +7,8 @@
 
 import Foundation
 
-class SubtractOperator {
-    func subtract(_ firstNumber: Double, by secondNumber: Double) -> Double {
-        let result = firstNumber - secondNumber
-        return result
+class SubtractOperator: AbstractOperator {
+    override func calculate(_ firstNumber: Double, by secondNumber: Double) -> Double {
+        return firstNumber - secondNumber
     }
 }
