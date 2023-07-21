@@ -11,4 +11,4 @@ import Foundation
 let calculator = Calculator(firstNumber: 10, secondNumber: 2)
 
 // Print out result
-calculator.find(.add, 4, by: 2)
+calculator.find(.add, 3, by: 2)

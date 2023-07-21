@@ -23,6 +23,7 @@ class Calculator {
         case subtract
     }
     
+    
     func find(_ operation: Operation, _ firstNumber: Double, by secondNumber: Double) {
         
         switch operation {

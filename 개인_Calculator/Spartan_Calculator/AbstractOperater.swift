@@ -7,8 +7,6 @@
 
 import Foundation
 
-class AbstractOperator {
-    func calculate(_ firstNumber: Double, by secondNumber: Double) -> Double {
-        return 0
-    }
+protocol AbstractOperator {
+    func calculate(_ firstNumber: Double, by secondNumber: Double) -> Double
 }

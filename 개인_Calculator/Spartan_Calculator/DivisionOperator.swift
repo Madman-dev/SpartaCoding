@@ -8,7 +8,7 @@
 import Foundation
 
 class DivisionOperator: AbstractOperator {
-    override func calculate(_ firstNumber: Double, by secondNumber: Double) -> Double {
+    func calculate(_ firstNumber: Double, by secondNumber: Double) -> Double {
         return firstNumber / secondNumber
     }
 }
