@@ -8,7 +8,7 @@
 import Foundation
 
 class MultiplicationOperator: AbstractOperator {
-    func calculate(_ firstNumber: Double, by secondNumber: Double) -> Double {
-        return firstNumber * secondNumber
+    override func operate(_ firstNumber: Int, by secondNumber: Int) -> Double {
+        return Double(firstNumber * secondNumber)
     }
 }
