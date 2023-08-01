@@ -1,5 +1,5 @@
 //
-//  Menu.swift
+//  Beer.swift
 //  SpartaCodingClub_Kiosk_Personal
 //
 //  Created by Jack Lee on 2023/07/29.
@@ -7,12 +7,12 @@
 
 import Foundation
 
-class Burger {
+class Beer {
     var name: String
-    var price: Double
+    var price: Int
     var description: String
     
-    init(name: String, price: Double, description: String) {
+    init(name: String, price: Int, description: String) {
         self.name = name
         self.price = price
         self.description = description

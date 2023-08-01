@@ -11,6 +11,9 @@
 		BD4AA9C12A74CAE200DFD331 /* Kiosk.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4AA9C02A74CAE200DFD331 /* Kiosk.swift */; };
 		BD4AA9C32A74D49E00DFD331 /* Burger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4AA9C22A74D49E00DFD331 /* Burger.swift */; };
 		BD4AA9C72A74D54700DFD331 /* BurgerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4AA9C62A74D54700DFD331 /* BurgerMenu.swift */; };
+		BD4AA9C92A74EBCA00DFD331 /* Custard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4AA9C82A74EBCA00DFD331 /* Custard.swift */; };
+		BD4AA9CB2A74ED1700DFD331 /* Drinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4AA9CA2A74ED1700DFD331 /* Drinks.swift */; };
+		BD4AA9CD2A74ED1D00DFD331 /* Beer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4AA9CC2A74ED1D00DFD331 /* Beer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +34,9 @@
 		BD4AA9C02A74CAE200DFD331 /* Kiosk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kiosk.swift; sourceTree = "<group>"; };
 		BD4AA9C22A74D49E00DFD331 /* Burger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Burger.swift; sourceTree = "<group>"; };
 		BD4AA9C62A74D54700DFD331 /* BurgerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BurgerMenu.swift; sourceTree = "<group>"; };
+		BD4AA9C82A74EBCA00DFD331 /* Custard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Custard.swift; sourceTree = "<group>"; };
+		BD4AA9CA2A74ED1700DFD331 /* Drinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drinks.swift; sourceTree = "<group>"; };
+		BD4AA9CC2A74ED1D00DFD331 /* Beer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +81,9 @@
 			isa = PBXGroup;
 			children = (
 				BD4AA9C22A74D49E00DFD331 /* Burger.swift */,
+				BD4AA9C82A74EBCA00DFD331 /* Custard.swift */,
+				BD4AA9CA2A74ED1700DFD331 /* Drinks.swift */,
+				BD4AA9CC2A74ED1D00DFD331 /* Beer.swift */,
 			);
 			path = Food;
 			sourceTree = "<group>";
@@ -145,9 +154,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD4AA9CB2A74ED1700DFD331 /* Drinks.swift in Sources */,
 				BD4AA9C32A74D49E00DFD331 /* Burger.swift in Sources */,
+				BD4AA9C92A74EBCA00DFD331 /* Custard.swift in Sources */,
 				BD4AA9BA2A74C97800DFD331 /* main.swift in Sources */,
 				BD4AA9C12A74CAE200DFD331 /* Kiosk.swift in Sources */,
+				BD4AA9CD2A74ED1D00DFD331 /* Beer.swift in Sources */,
 				BD4AA9C72A74D54700DFD331 /* BurgerMenu.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

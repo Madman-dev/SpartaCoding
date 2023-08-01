@@ -34,12 +34,14 @@ class Kiosk {
         sleep(1)
         displayMenu()
         
+        // loop로 꺼지지 않도록 구현
         while true {
             let input = readLine()!
             guard input == input else { return }
             
             switch input {
-            case "1": BurgerMenu().displayInfo()
+                // 🙋🏻‍♂️ 여기 문제점은 해당 함수들은 print만 하는 친구들이고 실질적으로 값을 주고 받거나 혹은 더 내부적으로 들어가는 모습이 아니다.
+            case "1": BurgerMenu().read()
             default:
                 print("종료합니다.")
                 break
