@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController {
     
     @IBOutlet weak var checkFinished: UIButton!
     @IBOutlet weak var addTodo: UIButton!
@@ -74,8 +74,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         present(alert, animated: true)
     }
-    
-    
+}
+
+extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard todoData.count <= 10 else { print("10개 이상은 안됩니다!"); return 10 }
         return todoData.count
@@ -90,3 +91,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 }
 
+extension ViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let actions = UIContextualAction(style: .normal, title: "완료") { action, view, complete in
+            print("완료했습니다.")
+        }
+        // 이 친구가 리턴을 해야하는 이유는?
+        return UISwipeActionsConfiguration(actions: [actions])
+    }
+}
