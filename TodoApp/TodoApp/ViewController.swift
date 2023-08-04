@@ -94,7 +94,15 @@ extension ViewController: UITableViewDataSource {
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let actions = UIContextualAction(style: .normal, title: "완료") { action, view, complete in
-            print("완료했습니다.")
+            
+            if let cell = tableView.cellForRow(at: indexPath) {
+                let text = cell.textLabel?.text ?? ""
+                let attributedText = NSAttributedString(string: text,
+                                                        attributes: [.strikethroughStyle: NSUnderlineStyle.thick.rawValue])
+                cell.textLabel?.attributedText = attributedText
+                print("완료했습니다.")
+                complete(true)
+            }
         }
         // 이 친구가 리턴을 해야하는 이유는?
         return UISwipeActionsConfiguration(actions: [actions])

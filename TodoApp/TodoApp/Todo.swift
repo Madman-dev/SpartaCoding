@@ -10,5 +10,9 @@ import Foundation
 struct Todo {
     var title: String
     var isCompleted: Bool = false
-    var date: Date?
+//    var date: Date?
+    
+    func completeToggled() -> Todo {
+        return Todo(title: title, isCompleted: !isCompleted)
+    }
 }
