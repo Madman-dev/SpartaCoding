@@ -58,6 +58,24 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         print("완료 버튼이 눌렸습니다")
     }
     
+    @IBAction func addTodoTapped(_ sender: UIButton) {
+        let alert = UIAlertController(title: "오늘의 Todo", message: "무엇을 하고 싶으세요?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "뒤돌아가기", style: .cancel, handler: nil))
+        
+        alert.addTextField{ (textField) in
+            textField.placeholder = "마음껏 작성하세요!"
+        }
+        
+        alert.addAction(UIAlertAction(title: "저장하기", style: .default, handler: { action in
+            if let title = alert.textFields?.first?.text {
+                print("정보 저장 \(title)")
+            }
+        }))
+        
+        present(alert, animated: true)
+    }
+    
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard todoData.count <= 10 else { print("10개 이상은 안됩니다!"); return 10 }
         return todoData.count
