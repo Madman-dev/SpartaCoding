@@ -13,18 +13,16 @@ class ViewController: UIViewController {
     @IBOutlet weak var addTodo: UIButton!
     @IBOutlet weak var todoTableView: UITableView!
     
-    let todoData = [
-    Todo(title: "내가 오늘 할 일은"),
-    Todo(title: "밥먹기"),
-    Todo(title: "불금 즐기기"),
-    Todo(title: "밖에 나가서 커피 마시기"),
-    Todo(title: "친구들과 대화하기"),
-    Todo(title: "책 읽기"),
-    Todo(title: "오호"),
-    Todo(title: "이것도?"),
-    Todo(title: "안되나?"),
-//    Todo(title: "안되나?"),
-//    Todo(title: "안되나?")
+    let todoData: [Todo] = [
+    Todo(title: "내가 오늘 할 일은", isCompleted: false),
+    Todo(title: "밥먹기", isCompleted: false),
+    Todo(title: "불금 즐기기", isCompleted: false),
+    Todo(title: "밖에 나가서 커피 마시기", isCompleted: false),
+    Todo(title: "친구들과 대화하기", isCompleted: false),
+    Todo(title: "책 읽기", isCompleted: false),
+    Todo(title: "오호", isCompleted: false),
+    Todo(title: "이것도?", isCompleted: false),
+    Todo(title: "안되나?", isCompleted: true),
     ]
     
     override func viewDidLoad() {
@@ -93,7 +91,12 @@ extension ViewController: UITableViewDataSource {
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let actions = UIContextualAction(style: .normal, title: "완료") { action, view, complete in
+        // [weak self]를 여기에 하는 이유는 뭐지? reference cycle이 여기서 생기나?
+        let pin = UIContextualAction(style: .normal, title: "📍") { [weak self] action, view, action in
+            print("저장합니다.")
+        }
+        
+        let complete = UIContextualAction(style: .normal, title: "완료") { action, view, complete in
             
             if let cell = tableView.cellForRow(at: indexPath) {
                 let text = cell.textLabel?.text ?? ""
@@ -104,7 +107,18 @@ extension ViewController: UITableViewDelegate {
                 complete(true)
             }
         }
-        // 이 친구가 리턴을 해야하는 이유는?
-        return UISwipeActionsConfiguration(actions: [actions])
+        pin.backgroundColor = .yellow
+        let actions = UISwipeActionsConfiguration(actions: [pin, complete])
+        actions.performsFirstActionWithFullSwipe = false
+        return actions
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let delete = UIContextualAction(style: .destructive, title: "삭제") { action, view, complete in
+            print("삭제합니다.")
+        }
+        let actions = UISwipeActionsConfiguration(actions: [delete])
+        actions.performsFirstActionWithFullSwipe = false
+        return actions
     }
 }

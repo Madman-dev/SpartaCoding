@@ -51,6 +51,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="373" height="43.666667938232422"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
+                                        <accessibility key="accessibilityConfiguration" identifier="cell"/>
                                     </tableViewCell>
                                 </prototypes>
                                 <sections/>
