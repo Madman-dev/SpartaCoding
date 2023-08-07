@@ -106,6 +106,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="wLz-3d-aU2"/>
+                    <connections>
+                        <outlet property="secondTableView" destination="pNm-sb-HXC" id="h0e-BW-Dbj"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SvJ-MW-YrZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
