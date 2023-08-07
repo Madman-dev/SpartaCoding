@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var addTodo: UIButton!
     @IBOutlet weak var todoTableView: UITableView!
     
-    let todoData: [Todo] = [
+    var todoData: [Todo] = [
     Todo(title: "내가 오늘 할 일은", isCompleted: false),
     Todo(title: "밥먹기", isCompleted: false),
     Todo(title: "불금 즐기기", isCompleted: false),
@@ -24,6 +24,8 @@ class ViewController: UIViewController {
     Todo(title: "이것도?", isCompleted: false),
     Todo(title: "안되나?", isCompleted: true),
     ]
+    
+    var completedTodo: Set<Int> = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,38 +89,61 @@ extension ViewController: UITableViewDataSource {
         cell.textLabel?.text = todo.title // 이부분은 이해해봐야겠다
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // Kepp actual data follow up with what's happening on screen - Needs to be lined up correctly
+            todoData.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
 }
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        // [weak self]를 여기에 하는 이유는 뭐지? reference cycle이 여기서 생기나?
-        let pin = UIContextualAction(style: .normal, title: "📍") { [weak self] action, view, action in
-            print("저장합니다.")
-        }
-        
-        let complete = UIContextualAction(style: .normal, title: "완료") { action, view, complete in
+        /// [weak self]를 여기에 하는 이유는 뭐지? reference cycle이 여기서 생기나?
+        /// 아래 코드 flow를 조금 더 이해해봐야겠다
+        let complete = UIContextualAction(style: .normal, title: "완료") { [weak self] action, view, complete in
+            
+            // weak self이기 때문에 있는지 확인 - optional binding
+            guard let self = self else { return }
             
             if let cell = tableView.cellForRow(at: indexPath) {
+                // 요 부분 살짝 이해 안됨
                 let text = cell.textLabel?.text ?? ""
-                let attributedText = NSAttributedString(string: text,
+                let attributedText: NSAttributedString
+                
+                // 선택한 셀의 텍스트가 NSAtrributedString 타입 + strikethrough가 있다면 그냥 text를 리턴하고
+                if let attributedOriginalText = cell.textLabel?.attributedText,
+                   let _ =  attributedOriginalText.attribute(.strikethroughStyle, at: 0,effectiveRange: nil) {
+                    attributedText = NSAttributedString(string: text)
+                // 선택한 셀의 텍스트에 어떤 타입도 적용되지 않았다면, 적용해라
+                } else {
+                    attributedText = NSAttributedString(string: text,
                                                         attributes: [.strikethroughStyle: NSUnderlineStyle.thick.rawValue])
+                }
                 cell.textLabel?.attributedText = attributedText
                 print("완료했습니다.")
                 complete(true)
             }
         }
-        pin.backgroundColor = .yellow
-        let actions = UISwipeActionsConfiguration(actions: [pin, complete])
+        
+        let actions = UISwipeActionsConfiguration(actions: [complete])
         actions.performsFirstActionWithFullSwipe = false
         return actions
     }
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let delete = UIContextualAction(style: .destructive, title: "삭제") { action, view, complete in
-            print("삭제합니다.")
-        }
-        let actions = UISwipeActionsConfiguration(actions: [delete])
-        actions.performsFirstActionWithFullSwipe = false
-        return actions
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
     }
+    
+    // 이친구는 삭제라기보다 그저 구현데이터? >> 여기서는 어떻게 구현할 수 있을지 모르겠다
+//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        let delete = UIContextualAction(style: .destructive, title: "삭제") { action, view, complete in
+//            print("삭제합니다.")
+//        }
+//        let actions = UISwipeActionsConfiguration(actions: [delete])
+//        actions.performsFirstActionWithFullSwipe = false
+//        return actions
+//    }
 }
