@@ -7,10 +7,9 @@
 
 import Foundation
 
-struct Todo {
+struct Todo: Codable {
     var title: String
     var isCompleted: Bool = false
-//    var date: Date?
     
     func completeToggled() -> Todo {
         return Todo(title: title, isCompleted: !isCompleted)
