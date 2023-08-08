@@ -86,7 +86,7 @@
         <!--Finished Controller-->
         <scene sceneID="cOf-um-zcu">
             <objects>
-                <viewController id="ayc-tN-7O3" customClass="FinishedController" customModule="TodoApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FinishTodoViewController" id="ayc-tN-7O3" customClass="FinishedController" customModule="TodoApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="49M-Bx-BaU">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -94,6 +94,16 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="pNm-sb-HXC">
                                 <rect key="frame" x="10" y="103" width="373" height="532"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="completedCell" id="hto-ie-hld">
+                                        <rect key="frame" x="0.0" y="50" width="373" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hto-ie-hld" id="SYE-S3-ung">
+                                            <rect key="frame" x="0.0" y="0.0" width="373" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ZqX-Ql-lXn"/>
@@ -107,7 +117,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="wLz-3d-aU2"/>
                     <connections>
-                        <outlet property="secondTableView" destination="pNm-sb-HXC" id="h0e-BW-Dbj"/>
+                        <outlet property="completedTableView" destination="pNm-sb-HXC" id="Pwc-IM-zXR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SvJ-MW-YrZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

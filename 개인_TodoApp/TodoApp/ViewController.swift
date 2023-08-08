@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var addTodo: UIButton!
     @IBOutlet weak var todoTableView: UITableView!
     
+    let defaults = UserDefaults.standard
     var todoData: [Todo] = [
     Todo(title: "내가 오늘 할 일은", isCompleted: false),
     Todo(title: "밥먹기", isCompleted: false),
@@ -22,18 +23,14 @@ class ViewController: UIViewController {
     Todo(title: "이것도?", isCompleted: false),
     Todo(title: "안되나?", isCompleted: true)
     ]
+    var completedData: [Todo] = []
     
-    var completedTodo: [String] = []
-    
-    let defaults = UserDefaults.standard
-        
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
         todoTableView.delegate = self
         todoTableView.dataSource = self
-    
         
         configureTodoButton()
         configureCheckFinished()
@@ -70,10 +67,19 @@ class ViewController: UIViewController {
         present(alert, animated: true)
     }
     
+
+    
     
     @IBAction func checkFinishedTapped(_ sender: UIButton) {
         print("완료 페이지를 확인합니다.")
+        //prepare와 performsegue의 차이점 - 이전처럼 이미 segue를 IB상 연결해두어서 두번 이뤄지게 된다. -> pushViewcontroller는 넘기는게 아니라 넘어가는거잖아!
+//        prepare(for: <#T##UIStoryboardSegue#>, sender: <#T##Any?#>)
+//        performSegue(withIdentifier: "finished", sender: nil)
+        let completedTodoTableViewController = storyboard?.instantiateViewController(withIdentifier: "FinishTodoViewController") as! FinishedController
+        completedTodoTableViewController.completedDatas = completedData
+//        navigationController?.pushViewController(completedTodoTableViewController, animated: true)
     }
+
     
     @IBAction func addTodoTapped(_ sender: UIButton) {
         let alert = UIAlertController(title: "오늘의 Todo", message: "무엇을 하고 싶으세요?", preferredStyle: .alert)
@@ -106,14 +112,13 @@ class ViewController: UIViewController {
     }
 }
 
-// 여기에서 오류가 발생하고 있었다??
 extension ViewController: UITableViewDataSource {
+    // 여기에서 오류가 발생하고 있었다?? -> 10개 이상 시 에러 처리 안했다.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard todoData.count <= 10 else { print("10개 이상은 안됩니다!"); return 0 }
         return todoData.count
     }
     
-    // cell을 재사용하는 영역
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let todo = todoData[indexPath.row]
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
@@ -121,7 +126,7 @@ extension ViewController: UITableViewDataSource {
         return cell
     }
     
-    // 데이터를 바꾸는 메서드이기 때문에 여기에 존재
+    // 데이터를 바꾸는 메서드이기 때문에 여기에 존재, todoData를 변경하고 테이블 뷰에 있는 cell도 함께 지우는 중 -> 이후 TodoManager에서 최종 변경된 값을 저장
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // 🔥 Keep actual data follow up with what's happening on screen - Needs to be lined up correctly
@@ -134,11 +139,11 @@ extension ViewController: UITableViewDataSource {
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        /// [weak self]를 여기에 하는 이유는 뭐지? reference cycle이 여기서 생기나?
+        /// [weak self]를 여기에 하는 이유는 뭐지? reference cycle이 여기서 생기나? -> YES!
         /// 아래 코드 flow를 조금 더 이해해봐야겠다
         let complete = UIContextualAction(style: .normal, title: "완료") { [weak self] action, view, complete in
             
-            // weak self이기 때문에 있는지 확인 - optional binding
+            // weak self이기 때문에 오류없이 (without it being deinited) 접근 가능 여부 확인
             guard let self = self else { return }
             
             if let cell = tableView.cellForRow(at: indexPath) {
@@ -146,16 +151,17 @@ extension ViewController: UITableViewDelegate {
                 let text = cell.textLabel?.text ?? ""
                 let attributedText: NSAttributedString
                 
-                // 선택한 셀의 텍스트가 NSAtrributedString 타입 + strikethrough가 있다면 그냥 text를 리턴하고
+                // 선택한 셀의 텍스트가 NSAtrributedString 타입 + strikethrough가 있다면 그냥 text를 리턴
                 if let attributedOriginalText = cell.textLabel?.attributedText,
                    let _ =  attributedOriginalText.attribute(.strikethroughStyle, at: 0,effectiveRange: nil) {
                     attributedText = NSAttributedString(string: text)
-                // 선택한 셀의 텍스트에 어떤 타입도 적용되지 않았다면, 적용해라
+                    // 선택한 셀의 텍스트에 어떤 타입도 적용되지 않았다면, 적용하도록 코드 수정
                 } else {
                     attributedText = NSAttributedString(string: text,
                                                         attributes: [.strikethroughStyle: NSUnderlineStyle.thick.rawValue])
                 }
                 cell.textLabel?.attributedText = attributedText
+                
                 print("완료했습니다.")
                 complete(true)
             }
@@ -165,18 +171,4 @@ extension ViewController: UITableViewDelegate {
         actions.performsFirstActionWithFullSwipe = false
         return actions
     }
-/// 이 친구는 뭐..? >> 지우는 용도로 사용할 수 있을 줄 알았지만, 완전 다른 영역
-//    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-//        return .delete
-//    }
-    
-    // 이친구는 삭제라기보다 그저 구현데이터? >> 여기서는 어떻게 구현할 수 있을지 모르겠다
-//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        let delete = UIContextualAction(style: .destructive, title: "삭제") { action, view, complete in
-//            print("삭제합니다.")
-//        }
-//        let actions = UISwipeActionsConfiguration(actions: [delete])
-//        actions.performsFirstActionWithFullSwipe = false
-//        return actions
-//    }
 }
