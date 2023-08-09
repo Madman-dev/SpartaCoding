@@ -28,13 +28,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var addTodo: UIButton!
     @IBOutlet weak var todoTableView: UITableView!
     
-    var completedData: [Todo] = [] // no data
-    let todoManager = TodoManager()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTodoButton()
         configureCheckFinished()
+        
+        /// 추가
+        TodoManager.shared.loadTodos()
+        /// 여기까지
     }
     
 //MARK: - UIComponent 구성 메서드
@@ -87,6 +88,9 @@ class ViewController: UIViewController {
                 let newTodo = Todo(id: (TodoManager.list.last?.id ?? -1) + 1, title: title, isCompleted: false)
                 TodoManager.list.append(newTodo)
                 self.todoTableView.insertRows(at: [IndexPath(row: TodoManager.list.count - 1, section: 0)], with: .automatic)
+                /// 추가
+                TodoManager.shared.saveTodos()
+                /// 여기까지
             }
         }
         
@@ -114,8 +118,10 @@ extension ViewController: UITableViewDataSource {
             // 🔥 Keep actual data follow up with what's happening on screen - Needs to be lined up correctly
             TodoManager.list.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
+            /// 추가
+            TodoManager.shared.saveTodos()
+            /// 여기까지
         }
-        // userdefault에 저장이 되고 있지 않음
     }
 }
 
