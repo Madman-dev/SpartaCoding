@@ -42,7 +42,7 @@ class TodoManager{
 //            userDefaults.set(encodedData, forKey: todoKey)
 //        }
 //    }
-//    
+//
 //    func loadTodo() -> [Todo] {
 //        if let encodedData = userDefaults.data(forKey: todoKey),
 //           let decodedItems = try? JSONDecoder().decode([Todo].self, from: encodedData) {
@@ -51,3 +51,4 @@ class TodoManager{
 //        return []
 //    }
 }
+

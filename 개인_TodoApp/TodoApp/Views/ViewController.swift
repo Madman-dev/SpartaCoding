@@ -22,8 +22,6 @@ import UIKit
  🔥🔥🔥 데이터는 한 쪽에서 관리를 하는게 좋은 것 같다. 각 뷰컨트롤러에서 변수를 지정해서 저장을 진행하는 방식보다 좀 더 편리한 듯?
 */
 
-
-
 class ViewController: UIViewController {
 //MARK: - Outlet 및 전역 변수 정리
     @IBOutlet weak var checkFinished: UIButton!
@@ -31,6 +29,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var todoTableView: UITableView!
     
     var completedData: [Todo] = [] // no data
+    let todoManager = TodoManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,7 +116,6 @@ extension ViewController: UITableViewDataSource {
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         // userdefault에 저장이 되고 있지 않음
-//        TodoManager.shared.saveTodo(TodoManager.list)
     }
 }
 
@@ -160,4 +158,3 @@ extension ViewController: UITableViewDelegate {
         return actions
     }
 }
-
