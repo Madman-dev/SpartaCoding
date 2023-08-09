@@ -134,6 +134,7 @@ extension ViewController: UITableViewDelegate {
             todo.isCompleted.toggle()
             TodoManager.list[indexPath.row] = todo
             
+            // 셀을 확인해서 strikeThrough를 적용할지 확인
             if let cell = tableView.cellForRow(at: indexPath) as? TodoViewCell {
                 if todo.isCompleted {
                     cell.textLabel?.attributedText = todo.title.strikeThrough()
@@ -144,6 +145,13 @@ extension ViewController: UITableViewDelegate {
                     TodoManager.completeTodo(todo: todo, isCompleted: false)
                 }
             }
+            
+            if todo.isCompleted {
+                TodoManager.storeCompleted(todo: todo)
+                TodoManager.list.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
+            
             complete(true)
             print("완료했습니다.")
         }

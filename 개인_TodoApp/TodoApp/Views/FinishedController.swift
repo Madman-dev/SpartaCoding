@@ -10,7 +10,6 @@ import UIKit
 class FinishedController: UIViewController {
     
     @IBOutlet weak var completedTableView: UITableView!
-//    var completedDatas: [Todo] = []
     // main에서 지정된 값을 next VC로 전달이 가능하다.
 
     override func viewDidLoad() {
@@ -19,6 +18,8 @@ class FinishedController: UIViewController {
         
         completedTableView.dataSource = self
         completedTableView.delegate = self
+        completedTableView.reloadData()
+        
     }
 }
 
@@ -28,12 +29,12 @@ extension FinishedController: UITableViewDelegate {
 
 extension FinishedController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return TodoManager.completeList().count
+        return TodoManager.completedList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! FinishedCell
-        cell.setTodo(TodoManager.completeList()[indexPath.row])
+        cell.setTodo(TodoManager.completedList[indexPath.row])
         return cell
     }
 }
