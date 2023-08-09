@@ -8,10 +8,20 @@
 import UIKit
 
 //MARK: - 이슈 정리
-// 1. 데이터 저장이 안된다.
-// 2. 지울 때 효과가 없다.
-// 3. 어느 시점에 지워야하는지 모른다.
-/// currentTitle을 처리하지 않았다 - nil값, 런타임에 꺼진다. > 해결! UIViewController
+/*
+ 1. 데이터 저장이 안된다.
+ 2. 지울 때 효과가 없다. < DONE
+ 3. 어느 시점에 지워야하는지 모른다.
+ currentTitle을 처리하지 않았다 - nil값, 런타임에 꺼진다. > 해결! UIViewController
+ 
+ - 데이터가 다음으로 안넘어간다
+ - 완료 버튼을 누르면 표기가 되지 않는다.
+ - 지울 때 효과가 없다.
+
+ 
+ 🔥🔥🔥 데이터는 한 쪽에서 관리를 하는게 좋은 것 같다. 각 뷰컨트롤러에서 변수를 지정해서 저장을 진행하는 방식보다 좀 더 편리한 듯?
+*/
+
 
 
 class ViewController: UIViewController {
@@ -20,11 +30,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var addTodo: UIButton!
     @IBOutlet weak var todoTableView: UITableView!
     
-    var completedData: [Todo] = []
+    var completedData: [Todo] = [] // no data
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         configureTodoButton()
         configureCheckFinished()
     }
@@ -50,24 +59,14 @@ class ViewController: UIViewController {
         checkFinished.clipsToBounds = true
     }
     
+    //MARK: - UIAlertController 활용
+
     func displayError(message: String) {
         let alert = UIAlertController(title: "10개 이상은 무리에요", message: message, preferredStyle: .alert)
         let dismissAction = UIAlertAction(title: "확인", style: .default, handler: nil)
         alert.addAction(dismissAction)
         present(alert, animated: true)
     }
-    
-    
-//    @IBAction func checkFinishedTapped(_ sender: UIButton) {
-//        print("완료 페이지를 확인합니다.")
-//        //prepare와 performsegue의 차이점 - 이전처럼 이미 segue를 IB상 연결해두어서 두번 이뤄지게 된다. -> pushViewcontroller는 넘기는게 아니라 넘어가는거잖아!
-//        //        prepare(for: <#T##UIStoryboardSegue#>, sender: <#T##Any?#>)
-//        //        performSegue(withIdentifier: "finished", sender: nil)
-//        //        navigationController?.pushViewController(completedTodoTableViewController, animated: true)
-//        let completedTodoTableViewController = storyboard?.instantiateViewController(withIdentifier: "FinishTodoViewController") as! FinishedController
-//        completedTodoTableViewController.completedDatas = completedData
-//    }
-
     
     @IBAction func addTodoTapped(_ sender: UIButton) {
         let alert = UIAlertController(title: "오늘의 Todo", message: "무엇을 하고 싶으세요?", preferredStyle: .alert)
@@ -81,14 +80,14 @@ class ViewController: UIViewController {
             textField.placeholder = "마음껏 작성하세요!"
         }
         
-        // can add data, but not persist
         let saveTodo = UIAlertAction(title: "저장하기", style: .default) { [weak self] action in
             guard let self = self else { return }
             
+            // 이부분 체크 필요
             if let title = alert.textFields?.first?.text, !title.isEmpty {
                 let newTodo = Todo(id: (TodoManager.list.last?.id ?? -1) + 1, title: title, isCompleted: false)
                 TodoManager.list.append(newTodo)
-                self.todoTableView.reloadData()
+                self.todoTableView.insertRows(at: [IndexPath(row: TodoManager.list.count - 1, section: 0)], with: .automatic)
             }
         }
         
@@ -100,9 +99,7 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: UITableViewDataSource {
-    // 여기에서 오류가 발생하고 있었다?? -> 10개 이상 시 에러 처리 안했다.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard TodoManager.list.count <= 10 else { print("10개 이상은 안됩니다!"); return 0 }
         return TodoManager.list.count
     }
     
@@ -119,30 +116,34 @@ extension ViewController: UITableViewDataSource {
             TodoManager.list.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
-        TodoManager.shared.saveTodo( TodoManager.list)
+        // userdefault에 저장이 되고 있지 않음
+//        TodoManager.shared.saveTodo(TodoManager.list)
     }
 }
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let complete = UIContextualAction(style: .normal, title: "완료") { [weak self] _, _,  complete in
+        let complete = UIContextualAction(style: .normal, title: "완료") { [weak self] action, view, complete in
             guard let self = self else {
                 complete(false)
                 return
             }
             
-            let todo = TodoManager.list[indexPath.row]
-            var updatedTodo = todo
+            var todo = TodoManager.list[indexPath.row]
+            todo.isCompleted.toggle()
+            TodoManager.list[indexPath.row] = todo
             
-            if !todo.isCompleted {
-                updatedTodo.isCompleted = true
-            } else {
-                updatedTodo.isCompleted = false
+            if let cell = tableView.cellForRow(at: indexPath) as? TodoViewCell {
+                if todo.isCompleted {
+                    cell.textLabel?.attributedText = todo.title.strikeThrough()
+                    TodoManager.completeTodo(todo: todo, isCompleted: true)
+                } else {
+                    cell.textLabel?.attributedText = nil
+                    cell.textLabel?.text = todo.title
+                    TodoManager.completeTodo(todo: todo, isCompleted: false)
+                }
             }
-            
-            TodoManager.list[indexPath.row] = updatedTodo
-//            tableView.reloadRows(at: [indexPath], with: .automatic) //-> UI도 함께 업데이트 되면서 발생
             complete(true)
             print("완료했습니다.")
         }

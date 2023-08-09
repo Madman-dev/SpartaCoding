@@ -21,6 +21,12 @@ class TodoManager{
         Todo(id: 6, title: "안되나?", isCompleted: true)
     ]
     
+    // 완료된 친구들만 필터하는 코드
+    static func completeList() -> [Todo] {
+        return list.filter{ $0.isCompleted == true }
+    }
+    
+    // 완료된 친구들은 완료, 미완은 미완으로 체크하는 코드
     static func completeTodo(todo: Todo, isCompleted: Bool) {
         for index in 0..<list.count {
             if list[index].id == todo.id {
@@ -29,17 +35,17 @@ class TodoManager{
         }
     }
     
-    func saveTodo(_ items: [Todo]) {
-        if let encodedData = try? JSONEncoder().encode(items) {
-            userDefaults.set(encodedData, forKey: todoKey)
-        }
-    }
-    
-    func loadTodo() -> [Todo] {
-        if let encodedData = userDefaults.data(forKey: todoKey),
-           let decodedItems = try? JSONDecoder().decode([Todo].self, from: encodedData) {
-            return decodedItems
-        }
-        return []
-    }
+//    func saveTodo(_ items: [Todo]) {
+//        if let encodedData = try? JSONEncoder().encode(items) {
+//            userDefaults.set(encodedData, forKey: todoKey)
+//        }
+//    }
+//    
+//    func loadTodo() -> [Todo] {
+//        if let encodedData = userDefaults.data(forKey: todoKey),
+//           let decodedItems = try? JSONDecoder().decode([Todo].self, from: encodedData) {
+//            return decodedItems
+//        }
+//        return []
+//    }
 }

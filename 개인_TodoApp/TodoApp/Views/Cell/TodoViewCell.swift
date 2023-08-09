@@ -10,7 +10,9 @@ import UIKit
 class TodoViewCell: UITableViewCell {
     
     var todo: Todo?
+    var todoIsComplete: Bool = false
     
+    // 최초 cell을 세팅할 때 사용되는 기능
     func setTodo(_ setTodo: Todo) {
         todo = setTodo
         guard let todo else { return }
@@ -18,9 +20,11 @@ class TodoViewCell: UITableViewCell {
         if todo.isCompleted {
             textLabel?.text = nil
             textLabel?.attributedText = todo.title.strikeThrough()
+            todoIsComplete = true
         } else {
             textLabel?.attributedText = nil
             textLabel?.text = todo.title
         }
+        todoIsComplete = todo.isCompleted
     }
 }
