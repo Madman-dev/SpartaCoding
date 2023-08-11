@@ -8,9 +8,9 @@
 import UIKit
 
 class FinishedController: UIViewController {
-    
+
+    //MARK: - Outlet 및 전역 변수 정리
     @IBOutlet weak var completedTableView: UITableView!
-    // main에서 지정된 값을 next VC로 전달이 가능하다.
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,16 +18,17 @@ class FinishedController: UIViewController {
         
         completedTableView.dataSource = self
         completedTableView.delegate = self
-        
         TodoManager.shared.loadTodos()
         completedTableView.reloadData()
     }
 }
 
+//MARK: - UITableViewDelegate
 extension FinishedController: UITableViewDelegate {
     
 }
 
+//MARK: - UITableViewDataSource
 extension FinishedController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return TodoManager.completedList.count
@@ -41,9 +42,8 @@ extension FinishedController: UITableViewDataSource {
         return cell
     }
     
+    // 선택한 cell 자동 deselect
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
-
-/// TableView를 직접적으로 호출하는 경우는 없네..?
