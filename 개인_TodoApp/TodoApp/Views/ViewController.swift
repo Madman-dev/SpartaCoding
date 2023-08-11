@@ -25,7 +25,7 @@ import UIKit
 class ViewController: UIViewController {
 //MARK: - Outlet 및 전역 변수 정리
     @IBOutlet weak var checkFinished: UIButton!
-    @IBOutlet weak var addTodo: UIButton!
+    @IBOutlet weak var addTodoButton: UIButton!
     @IBOutlet weak var todoTableView: UITableView!
     
     override func viewDidLoad() {
@@ -38,18 +38,23 @@ class ViewController: UIViewController {
         /// 여기까지
     }
     
-//MARK: - UIComponent 구성 메서드
-    func configureTodoButton() {
-        // 투두 버튼 생성
-        addTodo.setTitle("할일 추가하기", for: .normal)
-        addTodo.backgroundColor = .black
-        addTodo.setTitleColor(.white, for: .normal)
-        addTodo.layer.cornerRadius = 15
-        addTodo.layer.borderWidth = 1
-        addTodo.clipsToBounds = true
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateButton()
     }
     
-    func configureCheckFinished() {
+//MARK: - UIComponent 구성 메서드
+    private func configureTodoButton() {
+        // 투두 버튼 생성
+        addTodoButton.setTitle("할일 추가하기", for: .normal)
+        addTodoButton.backgroundColor = .red
+        addTodoButton.setTitleColor(.white, for: .normal)
+        addTodoButton.layer.cornerRadius = 15
+        addTodoButton.layer.borderWidth = 1
+        addTodoButton.clipsToBounds = true
+    }
+    
+    private func configureCheckFinished() {
         // 완료 확인 버튼 생성
         checkFinished.setTitle("완료한 일 확인하기", for: .normal)
         checkFinished.backgroundColor = .yellow
@@ -59,16 +64,24 @@ class ViewController: UIViewController {
         checkFinished.clipsToBounds = true
     }
     
+    fileprivate func animateButton(_ viewToAnimate: UIView) {
+        UIView.animate(withDuration: 0.15, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: .curveEaseIn, animations: { viewToAnimate.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }) { (_) in
+            UIView.animate(withDuration: 0.15, delay: 0, usingSpringWithDamping: 0.4, initialSpringVelocity: 2, options: .curveEaseIn, animations: { viewToAnimate.transform = CGAffineTransform(scaleX: 1, y: 1) }
+                           , completion: nil)
+        }
+    }
+    
     //MARK: - UIAlertController 활용
 
-    func displayError(message: String) {
+    private func displayError(message: String) {
         let alert = UIAlertController(title: "10개 이상은 무리에요", message: message, preferredStyle: .alert)
         let dismissAction = UIAlertAction(title: "확인", style: .default, handler: nil)
         alert.addAction(dismissAction)
         present(alert, animated: true)
     }
     
-    @IBAction func addTodoTapped(_ sender: UIButton) {
+    private func addTodo() {
         let alert = UIAlertController(title: "오늘의 Todo", message: "무엇을 하고 싶으세요?", preferredStyle: .alert)
         
         if TodoManager.list.count >= 10 {
@@ -83,7 +96,6 @@ class ViewController: UIViewController {
         let saveTodo = UIAlertAction(title: "저장하기", style: .default) { [weak self] action in
             guard let self = self else { return }
             
-            // 이부분 체크 필요
             if let title = alert.textFields?.first?.text, !title.isEmpty {
                 let newTodo = Todo(id: (TodoManager.list.last?.id ?? -1) + 1, title: title, isCompleted: false)
                 TodoManager.list.append(newTodo)
@@ -99,16 +111,58 @@ class ViewController: UIViewController {
         alert.addAction(cancel)
         present(alert, animated: true)
     }
+    
+    //MARK: - 버튼 사이즈 조절
+    
+    fileprivate func updateButton() {
+        let totalButtonWidth: CGFloat = view.bounds.width - 32
+
+        let minButtonWidth: CGFloat = 0
+        let maxButtonWidth = totalButtonWidth
+        
+        let numberOfTodos = CGFloat(TodoManager.list.count)
+        
+        // 투두에 맞춰서 최대 크기를 조절한다
+        var newButtonAWidth = max(minButtonWidth, maxButtonWidth - numberOfTodos * 100)
+        // 최대 크기에서 늘어난 버튼 크기를 조절한다
+        var newButtonBWidth = maxButtonWidth - newButtonAWidth
+        
+        
+//        if newButtonAWidth > maxButtonWidth {
+//            let temp = newButtonAWidth
+//            newButtonAWidth = newButtonBWidth
+//            newButtonBWidth = temp
+//        }
+        
+        UIView.animate(withDuration: 0.3) {
+            self.addTodoButton.frame.size.width = newButtonAWidth
+            self.checkFinished.frame.size.width = newButtonBWidth
+        }
+    }
+    
+    @IBAction func checkFinishedTapped(_ sender: UIButton) {
+        animateButton(sender)
+    }
+    
+    
+    @IBAction func addTodoTapped(_ sender: UIButton) {
+        self.animateButton(sender)
+        addTodo()
+    }
 }
+
+//MARK: - UITableViewDataSource
 
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print("1차 출력~")
         return TodoManager.list.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TodoViewCell
         cell.setTodo(TodoManager.list[indexPath.row])
+        print("2차 출력~")
         return cell
     }
     
@@ -116,14 +170,23 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // 🔥 Keep actual data follow up with what's happening on screen - Needs to be lined up correctly
+            // 🙋🏻‍♂️ 테이블 뷰에서 데이터 관리를 하는게 가장 복잡하던데, 기존에 가지고 있는 데이터에서 값을 먼저 삭제하고 테이블뷰에서 없애도록 처리를 하던데
+            // 오히려 이게 에러를 발생시켜야하는 거 아닌가요?
             TodoManager.list.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
+
             /// 추가
-            TodoManager.shared.saveTodos()
+//            TodoManager.shared.saveTodos()
             /// 여기까지
         }
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
+
+//MARK: - UITableViewDelegate
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -149,13 +212,12 @@ extension ViewController: UITableViewDelegate {
                     TodoManager.completeTodo(todo: todo, isCompleted: false)
                 }
             }
-            
+      
             if todo.isCompleted {
                 TodoManager.storeCompleted(todo: todo)
                 TodoManager.list.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
-            
             complete(true)
             print("완료했습니다.")
         }

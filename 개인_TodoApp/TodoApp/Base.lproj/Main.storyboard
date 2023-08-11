@@ -16,32 +16,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleAspectFit" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="nfZ-mB-Ti7">
-                                <rect key="frame" x="30" y="682" width="333" height="106"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BLy-HF-8vO">
-                                        <rect key="frame" x="0.0" y="0.0" width="159" height="106"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="BLy-HF-8vO" secondAttribute="height" multiplier="1.5" id="AhP-dt-kmS"/>
-                                        </constraints>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" title="Button"/>
-                                        <connections>
-                                            <segue destination="ayc-tN-7O3" kind="show" identifier="finished" id="23N-Kp-NXq"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Xb-VP-11j">
-                                        <rect key="frame" x="174" y="0.0" width="159" height="106"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" title="Button"/>
-                                        <connections>
-                                            <action selector="addTodoTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mpI-aB-7Kq"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                            </stackView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" estimatedSectionHeaderHeight="-1" sectionFooterHeight="28" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="TfL-aa-aVh">
-                                <rect key="frame" x="10" y="103" width="373" height="529"/>
+                                <rect key="frame" x="10" y="103" width="373" height="609"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" id="hKB-6J-j2b" customClass="TodoViewCell" customModule="TodoApp" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="373" height="43.666667938232422"/>
@@ -59,22 +35,48 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="WT3-qu-XsQ"/>
                                 </connections>
                             </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BLy-HF-8vO">
+                                <rect key="frame" x="10" y="722" width="150" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="BLy-HF-8vO" secondAttribute="height" multiplier="1.5:1" id="AhP-dt-kmS"/>
+                                    <constraint firstAttribute="height" constant="100" id="caQ-My-WgA"/>
+                                </constraints>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="checkFinishedTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="J64-js-bil"/>
+                                    <segue destination="ayc-tN-7O3" kind="show" identifier="finished" id="23N-Kp-NXq"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Xb-VP-11j">
+                                <rect key="frame" x="233" y="722" width="150" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="THv-hs-CK4"/>
+                                    <constraint firstAttribute="width" secondItem="6Xb-VP-11j" secondAttribute="height" multiplier="1.5:1" id="jhm-Md-VuI"/>
+                                </constraints>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="addTodoTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="HXr-9j-tPj"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="nfZ-mB-Ti7" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="30" id="3v1-fG-zsK"/>
+                            <constraint firstItem="BLy-HF-8vO" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="9mM-Mf-4eB"/>
                             <constraint firstItem="TfL-aa-aVh" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="MMX-EB-453"/>
+                            <constraint firstItem="BLy-HF-8vO" firstAttribute="top" secondItem="TfL-aa-aVh" secondAttribute="bottom" constant="10" id="MRA-iw-SWr"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="6Xb-VP-11j" secondAttribute="trailing" constant="10" id="TSI-G9-ZId"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="TfL-aa-aVh" secondAttribute="trailing" constant="10" id="TT7-sa-5QP"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="nfZ-mB-Ti7" secondAttribute="bottom" constant="30" id="Xwr-6q-BGi"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="nfZ-mB-Ti7" secondAttribute="trailing" constant="30" id="vRo-bk-V7C"/>
-                            <constraint firstItem="nfZ-mB-Ti7" firstAttribute="top" secondItem="TfL-aa-aVh" secondAttribute="bottom" constant="50" id="wsi-4i-ibo"/>
+                            <constraint firstAttribute="bottom" secondItem="6Xb-VP-11j" secondAttribute="bottom" constant="30" id="hIE-XB-N7b"/>
+                            <constraint firstAttribute="bottom" secondItem="BLy-HF-8vO" secondAttribute="bottom" constant="30" id="nJQ-Dg-kra"/>
                             <constraint firstItem="TfL-aa-aVh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="xim-Di-bzl"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="yxY-dN-p9P"/>
                     <connections>
-                        <outlet property="addTodo" destination="6Xb-VP-11j" id="Vcl-0q-N8Y"/>
+                        <outlet property="addTodoButton" destination="6Xb-VP-11j" id="5zY-Su-a4x"/>
                         <outlet property="checkFinished" destination="BLy-HF-8vO" id="ntv-0X-ao2"/>
                         <outlet property="todoTableView" destination="TfL-aa-aVh" id="Ytn-4U-1zx"/>
                     </connections>

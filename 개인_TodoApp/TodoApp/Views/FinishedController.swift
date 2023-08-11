@@ -14,7 +14,7 @@ class FinishedController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
+        view.backgroundColor = .black
         
         completedTableView.dataSource = self
         completedTableView.delegate = self
@@ -36,7 +36,13 @@ extension FinishedController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! FinishedCell
         cell.setTodo(TodoManager.completedList[indexPath.row])
+        cell.backgroundColor = .black
+        cell.textLabel?.textColor = .white
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
