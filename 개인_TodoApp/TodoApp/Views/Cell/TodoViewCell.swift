@@ -9,6 +9,8 @@ import UIKit
 
 class TodoViewCell: UITableViewCell {
     
+    @IBOutlet weak var dateLabel: UILabel!
+    
     var todo: Todo?
     var todoIsComplete: Bool = false
     
@@ -26,5 +28,9 @@ class TodoViewCell: UITableViewCell {
             textLabel?.text = todo.title
         }
         todoIsComplete = todo.isCompleted
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM d, HH:mm"
+        dateLabel.text = dateFormatter.string(from: todo.timeStamp)
     }
 }

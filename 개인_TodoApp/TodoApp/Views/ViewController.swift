@@ -96,7 +96,7 @@ class ViewController: UIViewController {
             guard let self = self else { return }
            
             if let title = alert.textFields?.first?.text, !title.isEmpty {
-                let newTodo = Todo(id: (TodoManager.list.last?.id ?? -1) + 1, title: title, isCompleted: false)
+                let newTodo = Todo(id: (TodoManager.list.last?.id ?? -1) + 1, title: title, isCompleted: false, timeStamp: .now)
                 TodoManager.list.append(newTodo)
                 self.todoTableView.insertRows(at: [IndexPath(row: TodoManager.list.count - 1, section: 0)], with: .automatic)
                 
@@ -113,7 +113,7 @@ class ViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    //MARK: - 버튼 사이즈 조절
+    //MARK: - Todo에 반응하는 버튼 조절 메서드
     
     fileprivate func updateButton() {
         let totalButtonWidth: CGFloat = view.bounds.width - 32
@@ -141,6 +141,8 @@ class ViewController: UIViewController {
         }
     }
     
+    //MARK: - IBAction
+    
     @IBAction func checkFinishedTapped(_ sender: UIButton) {
         animateButton(sender)
     }
@@ -157,11 +159,13 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return TodoManager.list.count
+        print("리스트가 출력됐습니다.")
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TodoViewCell
         cell.setTodo(TodoManager.list[indexPath.row])
+        print("셀이 세트됐습니다.")
         return cell
     }
     
@@ -169,9 +173,10 @@ extension ViewController: UITableViewDataSource {
         if editingStyle == .delete {
             TodoManager.list.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
-
+            
             // Userdefault에 데이터 저장
             TodoManager.shared.saveTodos()
+            print("\(indexPath)삭제 됐습니다.")
         }
     }
     
@@ -186,10 +191,8 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let complete = UIContextualAction(style: .normal, title: "완료") { [weak self] action, view, complete in
-            guard let self = self else {
-                complete(false)
-                return
-            }
+            // indexPath safety(?)
+            guard let self = self else { return }
             
             // Todo에 완료 여부(strikeThrough) 확인 및 처리
             var todo = TodoManager.list[indexPath.row]
@@ -208,12 +211,12 @@ extension ViewController: UITableViewDelegate {
             }
       
             if todo.isCompleted {
-                TodoManager.storeCompleted(todo: todo)
                 TodoManager.list.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             complete(true)
-            print("완료했습니다.")
+            print("\(indexPath)완료했습니다.")
+            TodoManager.storeCompleted(todo: todo)
         }
         let actions = UISwipeActionsConfiguration(actions: [complete])
         actions.performsFirstActionWithFullSwipe = false

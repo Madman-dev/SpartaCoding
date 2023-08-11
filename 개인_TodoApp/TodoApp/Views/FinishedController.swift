@@ -15,6 +15,7 @@ class FinishedController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
+        completedTableView.backgroundColor = .black
         
         completedTableView.dataSource = self
         completedTableView.delegate = self
