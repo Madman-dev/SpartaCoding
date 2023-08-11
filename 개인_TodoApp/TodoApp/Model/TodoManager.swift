@@ -11,13 +11,13 @@ class TodoManager{
     static let shared = TodoManager()
     private let userDefaults = UserDefaults.standard
     static var list: [Todo] = [
-        Todo(id: 0, title: "내가 오늘 할 일은", isCompleted: false, timeStamp: .now),
-        Todo(id: 1, title: "밥먹기", isCompleted: false, timeStamp: .now),
-        Todo(id: 2, title: "불금 즐기기", isCompleted: false, timeStamp: .now),
-        Todo(id: 3, title: "밖에 나가서 커피 마시기", isCompleted: false, timeStamp: .now),
-        Todo(id: 4, title: "친구들과 대화하기", isCompleted: false, timeStamp: .now),
-        Todo(id: 5, title: "이것도?", isCompleted: false, timeStamp: .now),
-        Todo(id: 6, title: "안되나?", isCompleted: false, timeStamp: .now)
+        Todo(id: 0, title: "여러분~", isCompleted: false, timeStamp: .now),
+        Todo(id: 1, title: "여러분~~", isCompleted: false, timeStamp: .now),
+        Todo(id: 2, title: "부~자 되세요~", isCompleted: false, timeStamp: .now),
+        Todo(id: 3, title: "꼭이요~~~", isCompleted: false, timeStamp: .now),
+        Todo(id: 4, title: "한국 광고", isCompleted: false, timeStamp: .now),
+        Todo(id: 5, title: "한국 타이어", isCompleted: false, timeStamp: .now),
+        Todo(id: 6, title: "탕수육", isCompleted: false, timeStamp: .now)
     ]
     static var completedList: [Todo] = []
     private let todoKey = "Todos"
@@ -26,11 +26,13 @@ class TodoManager{
         loadTodos()
     }
 
+    // 투두 List에서 완료 데이터만 추출 저장
     static func storeCompleted(todo: Todo) {
         guard todo.isCompleted == true else { return }
         completedList.append(todo)
     }
     
+    // 투두 List에서 완료 여부 확인
     static func completeTodo(todo: Todo, isCompleted: Bool) {
         for index in 0..<list.count {
             if list[index].id == todo.id {
@@ -40,6 +42,7 @@ class TodoManager{
         TodoManager.shared.saveTodos()
     }
     
+    // Userdefault로 데이터 저장
     func saveTodos() {
         do {
             let listData = try JSONEncoder().encode(TodoManager.list)
@@ -54,6 +57,7 @@ class TodoManager{
         }
     }
     
+    // Userdefault 저장 데이터 로드
     func loadTodos() {
         if let listData = userDefaults.data(forKey: todoKey),
            let completedListData = userDefaults.data(forKey: "Completed" + todoKey) {

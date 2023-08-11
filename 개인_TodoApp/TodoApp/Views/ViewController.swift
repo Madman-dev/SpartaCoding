@@ -14,6 +14,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var addTodoButton: UIButton!
     @IBOutlet weak var todoTableView: UITableView!
     
+    var buttonAWidth: CGFloat = 150
+    var buttonBWidth: CGFloat = 150
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTodoButton()
@@ -21,6 +24,8 @@ class ViewController: UIViewController {
         
         // Userdefault 데이터 호출
         TodoManager.shared.loadTodos()
+        print(TodoManager.list)
+        updateButton()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -113,31 +118,21 @@ class ViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    //MARK: - Todo에 반응하는 버튼 조절 메서드
+    //MARK: - Todo에 반응하는 버튼 조절 메서드 -> 결국 적용 실패!
     
     fileprivate func updateButton() {
-        let totalButtonWidth: CGFloat = view.bounds.width - 32
-
-        let minButtonWidth: CGFloat = 0
-        let maxButtonWidth = totalButtonWidth
+        let numberOfTodos = min(TodoManager.list.count, 10)
+        let ratio = CGFloat(numberOfTodos) / 10.0
         
-        let numberOfTodos = CGFloat(TodoManager.list.count)
+        let newButtonWidth = ratio * checkFinished.frame.size.width
+        let newButton2Width = (1.0 - ratio) * addTodoButton.frame.size.width
         
-        // 투두에 맞춰서 최대 크기를 조절한다
-        var newButtonAWidth = max(minButtonWidth, maxButtonWidth - numberOfTodos * 100)
-        // 최대 크기에서 늘어난 버튼 크기를 조절한다
-        var newButtonBWidth = maxButtonWidth - newButtonAWidth
-        
-        
-//        if newButtonAWidth > maxButtonWidth {
-//            let temp = newButtonAWidth
-//            newButtonAWidth = newButtonBWidth
-//            newButtonBWidth = temp
-//        }
+        buttonAWidth = newButtonWidth
+        buttonBWidth = newButton2Width
         
         UIView.animate(withDuration: 0.3) {
-            self.addTodoButton.frame.size.width = newButtonAWidth
-            self.checkFinished.frame.size.width = newButtonBWidth
+            self.addTodoButton.frame.size.width = self.buttonAWidth
+            self.checkFinished.frame.size.width = self.buttonBWidth
         }
     }
     
@@ -159,13 +154,11 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return TodoManager.list.count
-        print("리스트가 출력됐습니다.")
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TodoViewCell
         cell.setTodo(TodoManager.list[indexPath.row])
-        print("셀이 세트됐습니다.")
         return cell
     }
     
@@ -176,7 +169,6 @@ extension ViewController: UITableViewDataSource {
             
             // Userdefault에 데이터 저장
             TodoManager.shared.saveTodos()
-            print("\(indexPath)삭제 됐습니다.")
         }
     }
     
@@ -215,7 +207,6 @@ extension ViewController: UITableViewDelegate {
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             complete(true)
-            print("\(indexPath)완료했습니다.")
             TodoManager.storeCompleted(todo: todo)
         }
         let actions = UISwipeActionsConfiguration(actions: [complete])

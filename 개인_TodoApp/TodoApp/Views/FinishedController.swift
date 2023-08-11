@@ -19,6 +19,7 @@ class FinishedController: UIViewController {
         
         completedTableView.dataSource = self
         completedTableView.delegate = self
+        
         TodoManager.shared.loadTodos()
         completedTableView.reloadData()
     }
