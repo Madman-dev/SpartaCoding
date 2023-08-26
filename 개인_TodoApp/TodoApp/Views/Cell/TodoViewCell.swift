@@ -29,8 +29,8 @@ class TodoViewCell: UITableViewCell {
         }
         todoIsComplete = todo.isCompleted
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMM d, HH:mm"
-        dateLabel.text = dateFormatter.string(from: todo.timeStamp)
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "MMM d, HH:mm"
+//        dateLabel.text = dateFormatter.string(from: todo.timeStamp)
     }
 }
