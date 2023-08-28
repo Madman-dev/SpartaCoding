@@ -43,7 +43,6 @@ class FinishedController: UIViewController {
         returnButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100).isActive = true
         returnButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 100).isActive = true
         
-        TodoManager.shared.loadTodos()
         completedTableView.reloadData()
     }
 }
@@ -56,12 +55,11 @@ extension FinishedController: UITableViewDelegate {
 //MARK: - UITableViewDataSource
 extension FinishedController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return TodoManager.completedList.count
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! FinishedCell
-        cell.setTodo(TodoManager.completedList[indexPath.row])
         cell.backgroundColor = .blue
         cell.textLabel?.textColor = .red
         return cell

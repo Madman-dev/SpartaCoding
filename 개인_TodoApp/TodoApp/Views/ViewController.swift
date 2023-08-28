@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 //MARK: - 요청사항 정리
 /*
@@ -27,6 +28,10 @@ import UIKit
 class ViewController: UIViewController {
 
 //MARK: - Outlet 및 전역 변수 정리
+    
+    //reference to managed object context!!
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var todos: [Todo]?
     
     /// 코드로 구성한 테이블 뷰와 버튼들을 어떻게 하면 쉽게 구성할 수 있을까?
     /// Or, 어떻게 하면 생성 단계를 쉽게 할 수 있을까 -
@@ -89,8 +94,10 @@ class ViewController: UIViewController {
         
         // Userdefault 데이터 호출
         /// Userdefault를 대체하는 데이터 베이스를 활용해보기 or 후발대 강의처럼 클로저를 활용해보는 것으로
-        TodoManager.shared.loadTodos()
-        print(TodoManager.list)
+//        TodoManager.shared.loadTodos()
+//        print(TodoManager.list)
+        
+//        fetchData()
     }
     
 //MARK: - UIComponent 구성 메서드
@@ -130,11 +137,6 @@ class ViewController: UIViewController {
                                       message: "무엇을 하고 싶으세요?",
                                       preferredStyle: .alert)
         
-        if TodoManager.list.count >= 10 {
-            displayErrors(for: .tooMuchTodos)
-            return
-        }
-        
         alert.addTextField{ (textField) in
             textField.placeholder = "마음껏 작성하세요!"
         }
@@ -142,13 +144,26 @@ class ViewController: UIViewController {
         let saveTodo = UIAlertAction(title: "저장하기", style: .default) { [weak self] action in
             guard let self = self else { return }
            
-            if let title = alert.textFields?.first?.text, !title.isEmpty {
-                let newTodo = Todo(id: (TodoManager.list.last?.id ?? -1) + 1, title: title, isCompleted: false, timeStamp: .now)
-                TodoManager.list.append(newTodo)
-                self.todoTableView.insertRows(at: [IndexPath(row: TodoManager.list.count - 1, section: 0)], with: .automatic)
+            // 여기에서 발생하는 에러가 있었다. 데이터에 접근하는 방식이 안전하지 않은 것으로 보여짐
+            if let textfields = alert.textFields, let textfield = textfields.first?.text, !textfield.isEmpty {
+                let newTodo = Todo(context: self.context)
+                newTodo.title = textfield
+                newTodo.id = 0
+                newTodo.isCompleted = true
+                newTodo.section = "leisure"
+                newTodo.timeStamp = .now
                 
-                // Userdefault에 데이터 저장
-                TodoManager.shared.saveTodos()
+                // 데이터 저장
+                do {
+                    try self.context.save()
+                }
+                catch {
+                    
+                }
+                
+                // refetching the data
+                self.fetchData()
+                
             } else {
                 displayErrors(for: .blankTextField)
             }
@@ -192,29 +207,53 @@ class ViewController: UIViewController {
         self.animateButton(sender)
         addTodo()
     }
+    
+    func fetchData() {
+        // fetching data from CoreData to display
+        do {
+            // TodoManager에 있는 데이터를 가져올 수 있도록 노력해보라!
+            // 지금은 core data 속에 있는 값들을 다 가지고 와서 list로 넣도록 구성
+            self.todos = try context.fetch(Todo.fetchRequest())
+            
+            // main에서 호출할 수 있도록 thread를 지정하게 된다.
+            DispatchQueue.main.async {
+                // UI 역할이기 때문에 main 쓰레드에서 진행하도록 하는 것 -> Main이 아니면 에러가 발생?⭐️
+                self.todoTableView.reloadData()
+            }
+        }
+        catch {
+            
+        }
+    }
 }
 
 //MARK: - UITableViewDataSource
 
 extension ViewController: UITableViewDataSource {
     
+    // 카테고리 구분
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return Categories.allCases.count
+    }
+    
+    
+    // 카태고리별로 더미 데이터 구성 필요 -> 각 section별로 채워질 데이터 수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return TodoManager.list.count
+        return todos?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TodoViewCell
-        cell.setTodo(TodoManager.list[indexPath.row])
+        let todo = self.todos?[indexPath.row]
+        cell.textLabel?.text = todo?.title
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            TodoManager.list.remove(at: indexPath.row)
+            self.todos?.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
-            
-            // Userdefault에 데이터 저장
-            TodoManager.shared.saveTodos()
         }
     }
     
@@ -222,45 +261,43 @@ extension ViewController: UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    // 카테고리 구분 타이틀
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "이름이 변경되는가요? \(section)"
+        // ⭐️reach into the sction of category >> 섹션 타이틀을 새로 생성할 때마다 변경할 수 있나? -> 그러면 메시지 입력란을 카테고리 영역 하나 만들어야겠다!
+        // Categories 타입이 정확하게 뭔지 몰랐기에 rawValue를 접근할 수 없었다. String으로 지정하게 되면서 타입을 가질 수 있었던 것!
+        return Categories.allCases[section].rawValue
     }
 }
 
 //MARK: - UITableViewDelegate
 extension ViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        
-        let complete = UIContextualAction(style: .normal, title: "완료") { [weak self] action, view, complete in
-            guard let self = self else { return }
-            
-            // Todo에 완료 여부(strikeThrough) 확인 및 처리
-            var todo = TodoManager.list[indexPath.row]
-            todo.isCompleted.toggle()
-            TodoManager.list[indexPath.row] = todo
-            
-            if let cell = tableView.cellForRow(at: indexPath) as? TodoViewCell {
-                if todo.isCompleted {
-                    cell.textLabel?.attributedText = todo.title.strikeThrough()
-                    TodoManager.completeTodo(todo: todo, isCompleted: true)
-                } else {
-                    cell.textLabel?.attributedText = nil
-                    cell.textLabel?.text = todo.title
-                    TodoManager.completeTodo(todo: todo, isCompleted: false)
-                }
-            }
-      
-            if todo.isCompleted {
-                TodoManager.list.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .automatic)
-            }
-            complete(true)
-            TodoManager.storeCompleted(todo: todo)
-        }
-        let actions = UISwipeActionsConfiguration(actions: [complete])
-        actions.performsFirstActionWithFullSwipe = false
-        return actions
-    }
+//    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        
+//        let complete = UIContextualAction(style: .normal, title: "완료") { [weak self] action, view, complete in
+//            guard let self = self else { return }
+//            
+//            // Todo에 완료 여부(strikeThrough) 확인 및 처리
+//            var todo = self.list?[indexPath.row]
+////            todo.isCompleted.toggle()
+////            self.list[indexPath.row] = todo
+//            
+//            if let cell = tableView.cellForRow(at: indexPath) as? TodoViewCell {
+//                if todo.isCompleted {
+////                    cell.textLabel?.attributedText = todo.title.strikeThrough()
+////                    TodoManager.completeTodo(todo: todo, isCompleted: true)
+//                } else {
+//                    cell.textLabel?.attributedText = nil
+//                    cell.textLabel?.text = todo.title
+////                    TodoManager.completeTodo(todo: todo, isCompleted: false)
+//                }
+//            }
+//            complete(true)
+////            TodoManager.storeCompleted(todo: todo)
+//        }
+//        let actions = UISwipeActionsConfiguration(actions: [complete])
+//        actions.performsFirstActionWithFullSwipe = false
+//        return actions
+//    }
 }
 
 

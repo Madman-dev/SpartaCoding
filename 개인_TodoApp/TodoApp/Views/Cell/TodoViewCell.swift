@@ -11,17 +11,16 @@ class TodoViewCell: UITableViewCell {
     
     @IBOutlet weak var dateLabel: UILabel!
     
-    var todo: Todo?
+//    var todo: Todo?
     var todoIsComplete: Bool = false
     
     // 최초 cell을 세팅할 때 사용되는 기능
-    func setTodo(_ setTodo: Todo) {
-        todo = setTodo
-        guard let todo else { return }
+    func setTodo(_ setTodo: Todo?) {
+        guard let todo = setTodo else { return }
         
         if todo.isCompleted {
             textLabel?.text = nil
-            textLabel?.attributedText = todo.title.strikeThrough()
+//            textLabel?.attributedText = todo.title.strikeThrough()
             todoIsComplete = true
         } else {
             textLabel?.attributedText = nil

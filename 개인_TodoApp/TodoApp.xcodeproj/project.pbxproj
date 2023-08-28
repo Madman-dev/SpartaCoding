@@ -7,10 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BD473AD42A7CA41C002B863E /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD473AD32A7CA41C002B863E /* Todo.swift */; };
+		BD0C27E92A9A3D34005245A2 /* Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0C27E82A9A3D34005245A2 /* Categories.swift */; };
+		BD0C27EE2A9B7DA5005245A2 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BD0C27EC2A9B7DA5005245A2 /* DataModel.xcdatamodeld */; };
 		BD52064D2A82684200EAF470 /* TodoViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD52064C2A82684200EAF470 /* TodoViewCell.swift */; };
 		BD5206502A827A7F00EAF470 /* String+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD52064F2A827A7F00EAF470 /* String+extension.swift */; };
 		BD619C4C2A83204A00BF4EF8 /* FinishedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD619C4B2A83204A00BF4EF8 /* FinishedCell.swift */; };
+		BD855CD22A9C524F003AB4F2 /* Todo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD855CD02A9C524F003AB4F2 /* Todo+CoreDataClass.swift */; };
+		BD855CD32A9C524F003AB4F2 /* Todo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD855CD12A9C524F003AB4F2 /* Todo+CoreDataProperties.swift */; };
 		BD8E82192A7A3B7E00474438 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E82182A7A3B7E00474438 /* AppDelegate.swift */; };
 		BD8E821B2A7A3B7E00474438 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E821A2A7A3B7E00474438 /* SceneDelegate.swift */; };
 		BD8E821D2A7A3B7E00474438 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E821C2A7A3B7E00474438 /* ViewController.swift */; };
@@ -23,10 +26,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BD473AD32A7CA41C002B863E /* Todo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todo.swift; sourceTree = "<group>"; };
+		BD0C27E82A9A3D34005245A2 /* Categories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Categories.swift; sourceTree = "<group>"; };
+		BD0C27ED2A9B7DA5005245A2 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		BD52064C2A82684200EAF470 /* TodoViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoViewCell.swift; sourceTree = "<group>"; };
 		BD52064F2A827A7F00EAF470 /* String+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extension.swift"; sourceTree = "<group>"; };
 		BD619C4B2A83204A00BF4EF8 /* FinishedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedCell.swift; sourceTree = "<group>"; };
+		BD855CD02A9C524F003AB4F2 /* Todo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Todo+CoreDataClass.swift"; sourceTree = "<group>"; };
+		BD855CD12A9C524F003AB4F2 /* Todo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Todo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		BD8E82152A7A3B7E00474438 /* TodoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD8E82182A7A3B7E00474438 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BD8E821A2A7A3B7E00474438 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +87,7 @@
 		BD8E820C2A7A3B7E00474438 = {
 			isa = PBXGroup;
 			children = (
+				BD0C27EC2A9B7DA5005245A2 /* DataModel.xcdatamodeld */,
 				BD8E82172A7A3B7E00474438 /* TodoApp */,
 				BD8E82162A7A3B7E00474438 /* Products */,
 			);
@@ -113,8 +120,10 @@
 		BDB1B4532A81E156003AA986 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				BD473AD32A7CA41C002B863E /* Todo.swift */,
+				BD855CD02A9C524F003AB4F2 /* Todo+CoreDataClass.swift */,
+				BD855CD12A9C524F003AB4F2 /* Todo+CoreDataProperties.swift */,
 				BDDF36F82A85C4E600668ACF /* Error.swift */,
+				BD0C27E82A9A3D34005245A2 /* Categories.swift */,
 				BD9056E22A80C79F008C78F1 /* TodoManager.swift */,
 			);
 			path = Model;
@@ -192,15 +201,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD8E821D2A7A3B7E00474438 /* ViewController.swift in Sources */,
+				BD855CD22A9C524F003AB4F2 /* Todo+CoreDataClass.swift in Sources */,
 				BD8E822F2A7A408A00474438 /* FinishedController.swift in Sources */,
 				BD8E82192A7A3B7E00474438 /* AppDelegate.swift in Sources */,
-				BD473AD42A7CA41C002B863E /* Todo.swift in Sources */,
 				BD619C4C2A83204A00BF4EF8 /* FinishedCell.swift in Sources */,
 				BD8E821B2A7A3B7E00474438 /* SceneDelegate.swift in Sources */,
+				BD0C27E92A9A3D34005245A2 /* Categories.swift in Sources */,
 				BD52064D2A82684200EAF470 /* TodoViewCell.swift in Sources */,
 				BD9056E32A80C79F008C78F1 /* TodoManager.swift in Sources */,
+				BD0C27EE2A9B7DA5005245A2 /* DataModel.xcdatamodeld in Sources */,
 				BDDF36F92A85C4E600668ACF /* Error.swift in Sources */,
 				BD5206502A827A7F00EAF470 /* String+extension.swift in Sources */,
+				BD855CD32A9C524F003AB4F2 /* Todo+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -422,6 +434,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		BD0C27EC2A9B7DA5005245A2 /* DataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				BD0C27ED2A9B7DA5005245A2 /* DataModel.xcdatamodel */,
+			);
+			currentVersion = BD0C27ED2A9B7DA5005245A2 /* DataModel.xcdatamodel */;
+			path = DataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = BD8E820D2A7A3B7E00474438 /* Project object */;
 }
