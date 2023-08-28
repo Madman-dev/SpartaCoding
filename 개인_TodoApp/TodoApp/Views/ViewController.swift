@@ -97,7 +97,8 @@ class ViewController: UIViewController {
 //        TodoManager.shared.loadTodos()
 //        print(TodoManager.list)
         
-//        fetchData()
+        // 데이터가 저장이 되었다. > 이전에는 왜 오류가 발생했던 거지? (NSArray0 objectAtIndex:]: index 0 beyond bounds for empty NSArray)
+        fetchData()
     }
     
 //MARK: - UIComponent 구성 메서드
@@ -141,12 +142,12 @@ class ViewController: UIViewController {
             textField.placeholder = "마음껏 작성하세요!"
         }
         
-        let saveTodo = UIAlertAction(title: "저장하기", style: .default) { [weak self] action in
-            guard let self = self else { return }
+        let saveTodo = UIAlertAction(title: "저장하기", style: .default) { (action) in
            
             // 여기에서 발생하는 에러가 있었다. 데이터에 접근하는 방식이 안전하지 않은 것으로 보여짐
             if let textfields = alert.textFields, let textfield = textfields.first?.text, !textfield.isEmpty {
                 let newTodo = Todo(context: self.context)
+                // 🔥 이전 데이터들은 바꿀 수 있도록 수정해보자
                 newTodo.title = textfield
                 newTodo.id = 0
                 newTodo.isCompleted = true
@@ -157,6 +158,7 @@ class ViewController: UIViewController {
                 do {
                     try self.context.save()
                 }
+                // 🔥 에러 처리 > 일단 먼저 CRUD를 실행한 이후
                 catch {
                     
                 }
@@ -165,7 +167,8 @@ class ViewController: UIViewController {
                 self.fetchData()
                 
             } else {
-                displayErrors(for: .blankTextField)
+                // 클로저가 실행됐을 때 100% 값이 있다는 것을 보장하게 된다면 참조 값을 적용하지 않을수 있도록 해야한다.
+                self.displayErrors(for: .blankTextField)
             }
         }
         
@@ -208,6 +211,7 @@ class ViewController: UIViewController {
         addTodo()
     }
     
+    // CoreData에 있는 값을 호출하는 방법
     func fetchData() {
         // fetching data from CoreData to display
         do {
@@ -250,12 +254,12 @@ extension ViewController: UITableViewDataSource {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            self.todos?.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-        }
-    }
+//    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//        if editingStyle == .delete {
+//            self.todos?.remove(at: indexPath.row)
+//            tableView.deleteRows(at: [indexPath], with: .automatic)
+//        }
+//    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -271,33 +275,28 @@ extension ViewController: UITableViewDataSource {
 
 //MARK: - UITableViewDelegate
 extension ViewController: UITableViewDelegate {
-//    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        
-//        let complete = UIContextualAction(style: .normal, title: "완료") { [weak self] action, view, complete in
-//            guard let self = self else { return }
-//            
-//            // Todo에 완료 여부(strikeThrough) 확인 및 처리
-//            var todo = self.list?[indexPath.row]
-////            todo.isCompleted.toggle()
-////            self.list[indexPath.row] = todo
-//            
-//            if let cell = tableView.cellForRow(at: indexPath) as? TodoViewCell {
-//                if todo.isCompleted {
-////                    cell.textLabel?.attributedText = todo.title.strikeThrough()
-////                    TodoManager.completeTodo(todo: todo, isCompleted: true)
-//                } else {
-//                    cell.textLabel?.attributedText = nil
-//                    cell.textLabel?.text = todo.title
-////                    TodoManager.completeTodo(todo: todo, isCompleted: false)
-//                }
-//            }
-//            complete(true)
-////            TodoManager.storeCompleted(todo: todo)
-//        }
-//        let actions = UISwipeActionsConfiguration(actions: [complete])
-//        actions.performsFirstActionWithFullSwipe = false
-//        return actions
-//    }
+    
+    // 삭제 기능을 구현해두기는 했네... 흠...
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .destructive, title: "삭제하기") { (action, view, completionHandler) in
+            // 내가 지우고 싶은 todo를 지정하고
+            let remove = self.todos?[indexPath.row]
+            
+            // 지정된 todo를 지울 수 있도록 거쳐가야한다.
+            if let remove = remove {
+                self.context.delete(remove)
+            }
+            
+            do {
+                try self.context.save()
+            }
+            catch {
+                
+            }
+            self.fetchData()
+        }
+        return UISwipeActionsConfiguration(actions: [action])
+    }
 }
 
 
