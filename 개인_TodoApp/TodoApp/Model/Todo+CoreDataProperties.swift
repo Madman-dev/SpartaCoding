@@ -18,11 +18,11 @@ extension Todo {
 
     @NSManaged public var id: Int64
     @NSManaged public var isCompleted: Bool
-    @NSManaged public var section: String?
+    @NSManaged public var section: String
     @NSManaged public var timeStamp: Date?
     @NSManaged public var title: String?
 }
 
 extension Todo : Identifiable {
-
+    
 }

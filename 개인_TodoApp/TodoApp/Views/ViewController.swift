@@ -215,9 +215,16 @@ class ViewController: UIViewController {
     func fetchData() {
         // fetching data from CoreData to display
         do {
+            
             // TodoManager에 있는 데이터를 가져올 수 있도록 노력해보라!
             // 지금은 core data 속에 있는 값들을 다 가지고 와서 list로 넣도록 구성
-            self.todos = try context.fetch(Todo.fetchRequest())
+            
+            // filter를 적용하는 방법
+            let filteredRequest = Todo.fetchRequest() as NSFetchRequest<Todo>
+            let filter = NSPredicate(format: "title contains '이렇게'")
+            filteredRequest.predicate = filter
+            // filteredRequest를 했을 때 적용이 되는 이유는 Todo 타입으로 변환이 되어 있기 때문이다.
+            self.todos = try context.fetch(filteredRequest) //Todo.fetchRequest()
             
             // main에서 호출할 수 있도록 thread를 지정하게 된다.
             DispatchQueue.main.async {
@@ -243,7 +250,7 @@ extension ViewController: UITableViewDataSource {
     
     // 카태고리별로 더미 데이터 구성 필요 -> 각 section별로 채워질 데이터 수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return todos?.count ?? 0
+        return todos?.count ?? 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -253,16 +260,31 @@ extension ViewController: UITableViewDataSource {
         
         return cell
     }
-    
-//    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if editingStyle == .delete {
-//            self.todos?.remove(at: indexPath.row)
-//            tableView.deleteRows(at: [indexPath], with: .automatic)
-//        }
-//    }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        // 투두를 지정하고
+        let todo = self.todos![indexPath.row]
+        // alert 창을 만들어서
+        let alert = UIAlertController(title: "투두 수정", message: "내용 수정", preferredStyle: .alert)
+        alert.addTextField()
+        
+        // 해당 alert의 textField에 접근하고
+        let textField = alert.textFields![0]
+        textField.text = todo.title
+        
+        // alert에 버튼을 추가
+        let saveButton = UIAlertAction(title: "저장", style: .default) { _ in
+            let textfield = alert.textFields![0]
+            todo.title = textfield.text
+            do {
+                try self.context.save()
+            }
+            catch {
+            }
+            self.fetchData()
+        }
+        alert.addAction(saveButton)
+        present(alert, animated: true)
     }
     
     // 카테고리 구분 타이틀
@@ -286,12 +308,11 @@ extension ViewController: UITableViewDelegate {
             if let remove = remove {
                 self.context.delete(remove)
             }
-            
             do {
                 try self.context.save()
             }
             catch {
-                
+                // 에러처리 해보자!
             }
             self.fetchData()
         }
