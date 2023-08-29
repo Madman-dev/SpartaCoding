@@ -17,21 +17,24 @@ import CoreData
  ㄴ 리드미 작성
  ㄴ 선택 구현 - 일단 위에 내용들 먼저!
  */
+/// Userdefault를 대체하는 데이터 베이스를 활용해보기 or 후발대 강의처럼 클로저를 활용해보는 것으로
+
 
 /*
  오늘 코드로 무엇을 바꿀 것인가?
  1. Fully implment programmatic code
  2. draw UI similiar to my previous design
  */
- 
+
 
 class ViewController: UIViewController {
-
-//MARK: - Outlet 및 전역 변수 정리
+    
+    //MARK: - Outlet 및 전역 변수 정리
     
     //reference to managed object context!!
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var todos: [Todo]?
+    var textFieldBottomConstraint: NSLayoutConstraint?
     
     /// 코드로 구성한 테이블 뷰와 버튼들을 어떻게 하면 쉽게 구성할 수 있을까?
     /// Or, 어떻게 하면 생성 단계를 쉽게 할 수 있을까 -
@@ -42,32 +45,53 @@ class ViewController: UIViewController {
         return tableView
     }()
     
-    let checkFinishedButton = {
+    let tapBarView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        view.alpha = 0.5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let checkFinishedButton: UIButton = {
         let bt = UIButton()
-        bt.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-        bt.titleLabel?.text = ""
-        bt.setTitle("완료한 일 확인하기", for: .normal)
+        bt.setImage(UIImage(systemName: "house.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        bt.imageView?.contentMode = .scaleAspectFit
         bt.backgroundColor = .blue
-        bt.setTitleColor(.black, for: .normal)
         bt.layer.cornerRadius = 15
         bt.layer.borderWidth = 1
         bt.clipsToBounds = true
         bt.addTarget(self, action: #selector(checkFinishedTapped), for: .touchUpInside)
+        bt.widthAnchor.constraint(equalToConstant: 50).isActive = true
         return bt
     }()
-        
-    let addTodoButton = {
-        let bt = UIButton()
-        bt.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-        bt.titleLabel?.text = ""
-        bt.setTitle("할일 추가하기", for: .normal)
-        bt.backgroundColor = .yellow
-        bt.setTitleColor(.white, for: .normal)
-        bt.layer.cornerRadius = 15
-        bt.layer.borderWidth = 1
-        bt.clipsToBounds = true
-        bt.addTarget(self, action: #selector(addTodoTapped), for: .touchUpInside)
-        return bt
+    
+    //    let addTodoButton = {
+    //        let bt = UIButton()
+    //        bt.titleLabel?.text = ""
+    //        bt.setTitle("할일 추가하기", for: .normal)
+    //        bt.setTitleColor(.white, for: .normal)
+    //        bt.backgroundColor = .yellow
+    //        bt.layer.cornerRadius = 15
+    //        bt.layer.borderWidth = 1
+    //        bt.clipsToBounds = true
+    //        bt.addTarget(self, action: #selector(addTodoTapped), for: .touchUpInside)
+    //        return bt
+    //    }()
+    
+    lazy var messageTextField: UITextField = {
+        let tf = UITextField()
+        tf.placeholder = "입력하세요"
+        tf.backgroundColor = .white
+        //        tf.borderStyle = .roundedRect
+        tf.layer.cornerRadius = 15
+        tf.layer.borderWidth = 1
+        tf.layer.borderColor = UIColor.red.cgColor
+        tf.layer.masksToBounds = true
+        tf.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        tf.delegate = self
+        tf.autocorrectionType = .no
+        return tf
     }()
     
     /// 코드 정리하기
@@ -76,32 +100,61 @@ class ViewController: UIViewController {
         
         todoTableView.dataSource = self
         todoTableView.delegate = self
-        
+        view.backgroundColor = .black
+
         view.addSubview(todoTableView)
-        
-        /// 이 친구를 어디로 어떻게 배치를 해야할까?
-        let stack = UIStackView(arrangedSubviews: [checkFinishedButton, addTodoButton])
-        stack.axis = .horizontal
-        stack.spacing = 5
-        stack.distribution = .fillEqually
-        view.addSubview(stack)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15).isActive = true
-        stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15).isActive = true
-        stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15).isActive = true
-        
         todoTableView.frame = view.bounds
         
-        // Userdefault 데이터 호출
-        /// Userdefault를 대체하는 데이터 베이스를 활용해보기 or 후발대 강의처럼 클로저를 활용해보는 것으로
-//        TodoManager.shared.loadTodos()
-//        print(TodoManager.list)
+        /// 이 친구를 어디로 어떻게 배치를 해야할까?
+        let stack = UIStackView(arrangedSubviews: [checkFinishedButton, messageTextField])
+        
+        stack.axis = .horizontal
+        stack.spacing = 5
+        stack.distribution = .fillProportionally
+        
+        view.addSubview(tapBarView)
+        view.addSubview(stack)
+        
+//        let totalStack = UIStackView(arrangedSubviews: [tapBarView, stack])
+        
+        tapBarView.bottomAnchor.constraint(equalTo: stack.bottomAnchor).isActive = true
+        tapBarView.leadingAnchor.constraint(equalTo: stack.leadingAnchor).isActive = true
+        tapBarView.trailingAnchor.constraint(equalTo: stack.trailingAnchor).isActive = true
+        tapBarView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+//        totalStack.translatesAutoresizingMaskIntoConstraints = false
+//        totalStack.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+//        totalStack.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+//        totalStack.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        
+        tapBarView.bottomAnchor.constraint(equalTo: stack.topAnchor, constant: -10).isActive = true
+        
+        textFieldBottomConstraint = stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30)
+        textFieldBottomConstraint?.isActive = true
+        
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
+        stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15).isActive = true
+        stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15).isActive = true
         
         // 데이터가 저장이 되었다. > 이전에는 왜 오류가 발생했던 거지? (NSArray0 objectAtIndex:]: index 0 beyond bounds for empty NSArray)
         fetchData()
     }
     
-//MARK: - UIComponent 구성 메서드
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    //MARK: - UIComponent 구성 메서드
     
     // 버튼 bounceBack 효과
     fileprivate func animateButton(_ viewToAnimate: UIView) {
@@ -143,7 +196,7 @@ class ViewController: UIViewController {
         }
         
         let saveTodo = UIAlertAction(title: "저장하기", style: .default) { (action) in
-           
+            
             // 여기에서 발생하는 에러가 있었다. 데이터에 접근하는 방식이 안전하지 않은 것으로 보여짐
             if let textfields = alert.textFields, let textfield = textfields.first?.text, !textfield.isEmpty {
                 let newTodo = Todo(context: self.context)
@@ -180,21 +233,53 @@ class ViewController: UIViewController {
     
     //MARK: - Todo에 반응하는 버튼 조절 메서드 -> 결국 적용 실패!
     
-//    fileprivate func updateButton() {
-//        let numberOfTodos = min(TodoManager.list.count, 10)
-//        let ratio = CGFloat(numberOfTodos) / 10.0
-//
-//        let newButtonWidth = ratio * checkFinished.frame.size.width
-//        let newButton2Width = (1.0 - ratio) * addTodoButton.frame.size.width
-//
-//        buttonAWidth = newButtonWidth
-//        buttonBWidth = newButton2Width
-//
-//        UIView.animate(withDuration: 0.3) {
-//            self.addTodoButton.frame.size.width = self.buttonAWidth
-//            self.checkFinished.frame.size.width = self.buttonBWidth
-//        }
-//    }
+    //    fileprivate func updateButton() {
+    //        let numberOfTodos = min(TodoManager.list.count, 10)
+    //        let ratio = CGFloat(numberOfTodos) / 10.0
+    //
+    //        let newButtonWidth = ratio * checkFinished.frame.size.width
+    //        let newButton2Width = (1.0 - ratio) * addTodoButton.frame.size.width
+    //
+    //        buttonAWidth = newButtonWidth
+    //        buttonBWidth = newButton2Width
+    //
+    //        UIView.animate(withDuration: 0.3) {
+    //            self.addTodoButton.frame.size.width = self.buttonAWidth
+    //            self.checkFinished.frame.size.width = self.buttonBWidth
+    //        }
+    //    }
+    
+    @objc func keyboardWillShow(_ notification: NSNotification) {
+        if messageTextField.isEditing {
+            updateViewWithKeyboard(notification: notification,
+                                   viewBottomConstraint: self.textFieldBottomConstraint!,
+                                   keyboardWillShow: true)
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: NSNotification) {
+        updateViewWithKeyboard(notification: notification, viewBottomConstraint: self.textFieldBottomConstraint!, keyboardWillShow: false)
+    }
+    
+    func updateViewWithKeyboard(notification: NSNotification,
+                                viewBottomConstraint: NSLayoutConstraint,
+                                keyboardWillShow: Bool) {
+        guard let userInfo = notification.userInfo,
+              let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        guard let keyboardDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else { return }
+        guard let keyboardCurve = UIView.AnimationCurve(rawValue: userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as! Int) else { return }
+        
+        let keyboardHeight = keyboardSize.cgRectValue.height
+        
+        if keyboardWillShow { viewBottomConstraint.constant = -(keyboardHeight + 50) }
+        else { viewBottomConstraint.constant = -30 }
+        
+        let animator = UIViewPropertyAnimator(duration: keyboardDuration, curve: keyboardCurve) { [weak self] in
+            self?.view.layoutIfNeeded()
+        }
+        animator.startAnimation()
+    }
+    
     
     //MARK: - IBAction
     
@@ -220,11 +305,11 @@ class ViewController: UIViewController {
             // 지금은 core data 속에 있는 값들을 다 가지고 와서 list로 넣도록 구성
             
             // filter를 적용하는 방법
-            let filteredRequest = Todo.fetchRequest() as NSFetchRequest<Todo>
-            let filter = NSPredicate(format: "title contains '이렇게'")
-            filteredRequest.predicate = filter
+            //            let filteredRequest = Todo.fetchRequest() as NSFetchRequest<Todo>
+            //            let filter = NSPredicate(format: "title contains '이렇게'")
+            //            filteredRequest.predicate = filter
             // filteredRequest를 했을 때 적용이 되는 이유는 Todo 타입으로 변환이 되어 있기 때문이다.
-            self.todos = try context.fetch(filteredRequest) //Todo.fetchRequest()
+            self.todos = try context.fetch(Todo.fetchRequest()) //Todo.fetchRequest()
             
             // main에서 호출할 수 있도록 thread를 지정하게 된다.
             DispatchQueue.main.async {
@@ -260,7 +345,7 @@ extension ViewController: UITableViewDataSource {
         
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 투두를 지정하고
         let todo = self.todos![indexPath.row]
@@ -320,13 +405,19 @@ extension ViewController: UITableViewDelegate {
     }
 }
 
+extension ViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        messageTextField.resignFirstResponder()
+    }
+}
+
 
 // MARK: - Findings
 /*
  // 새로 생성을 한다고...? 이게 맞을까?
-//        for viewController in navigationController?.viewControllers ?? [] {
-//            if viewController is FinishedController {
-//                navigationController?.popToViewController(viewController, animated: true)
-//            }
-//        }
+ //        for viewController in navigationController?.viewControllers ?? [] {
+ //            if viewController is FinishedController {
+ //                navigationController?.popToViewController(viewController, animated: true)
+ //            }
+ //        }
  */

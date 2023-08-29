@@ -10,7 +10,6 @@ import UIKit
 class FinishedController: UIViewController {
 
     //MARK: - Outlet 및 전역 변수 정리
-//    @IBOutlet weak var completedTableView: UITableView!
     let completedTableView = {
         let tableView = UITableView(frame: UIScreen.main.bounds, style: .insetGrouped)
         tableView.backgroundColor = .black
