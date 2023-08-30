@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BD0C27E92A9A3D34005245A2 /* Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0C27E82A9A3D34005245A2 /* Categories.swift */; };
 		BD0C27EE2A9B7DA5005245A2 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BD0C27EC2A9B7DA5005245A2 /* DataModel.xcdatamodeld */; };
+		BD14B08F2A9F31920056BD27 /* SectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14B08E2A9F31920056BD27 /* SectionViewCell.swift */; };
 		BD52064D2A82684200EAF470 /* TodoViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD52064C2A82684200EAF470 /* TodoViewCell.swift */; };
 		BD5206502A827A7F00EAF470 /* String+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD52064F2A827A7F00EAF470 /* String+extension.swift */; };
 		BD619C4C2A83204A00BF4EF8 /* FinishedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD619C4B2A83204A00BF4EF8 /* FinishedCell.swift */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		BD0C27E82A9A3D34005245A2 /* Categories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Categories.swift; sourceTree = "<group>"; };
 		BD0C27ED2A9B7DA5005245A2 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
+		BD14B08E2A9F31920056BD27 /* SectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionViewCell.swift; sourceTree = "<group>"; };
 		BD52064C2A82684200EAF470 /* TodoViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoViewCell.swift; sourceTree = "<group>"; };
 		BD52064F2A827A7F00EAF470 /* String+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extension.swift"; sourceTree = "<group>"; };
 		BD619C4B2A83204A00BF4EF8 /* FinishedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedCell.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 			children = (
 				BD52064C2A82684200EAF470 /* TodoViewCell.swift */,
 				BD619C4B2A83204A00BF4EF8 /* FinishedCell.swift */,
+				BD14B08E2A9F31920056BD27 /* SectionViewCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 				BD855CD22A9C524F003AB4F2 /* Todo+CoreDataClass.swift in Sources */,
 				BD8E822F2A7A408A00474438 /* FinishedController.swift in Sources */,
 				BD8E82192A7A3B7E00474438 /* AppDelegate.swift in Sources */,
+				BD14B08F2A9F31920056BD27 /* SectionViewCell.swift in Sources */,
 				BD619C4C2A83204A00BF4EF8 /* FinishedCell.swift in Sources */,
 				BD8E821B2A7A3B7E00474438 /* SceneDelegate.swift in Sources */,
 				BD0C27E92A9A3D34005245A2 /* Categories.swift in Sources */,
