@@ -35,13 +35,17 @@ class ViewController: UIViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var todos: [Todo]?
     var textFieldBottomConstraint: NSLayoutConstraint?
+    let data: [String] = [
+        "Leisure", "Work", "Personal"
+    ]
+
     
     /// 코드로 구성한 테이블 뷰와 버튼들을 어떻게 하면 쉽게 구성할 수 있을까?
     /// Or, 어떻게 하면 생성 단계를 쉽게 할 수 있을까 -
     let todoTableView = {
         let tableView = UITableView(frame: UIScreen.main.bounds, style: .insetGrouped)
         tableView.register(TodoViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.backgroundColor = .red
+        tableView.backgroundColor = .black
         return tableView
     }()
     
@@ -66,24 +70,10 @@ class ViewController: UIViewController {
         return bt
     }()
     
-    //    let addTodoButton = {
-    //        let bt = UIButton()
-    //        bt.titleLabel?.text = ""
-    //        bt.setTitle("할일 추가하기", for: .normal)
-    //        bt.setTitleColor(.white, for: .normal)
-    //        bt.backgroundColor = .yellow
-    //        bt.layer.cornerRadius = 15
-    //        bt.layer.borderWidth = 1
-    //        bt.clipsToBounds = true
-    //        bt.addTarget(self, action: #selector(addTodoTapped), for: .touchUpInside)
-    //        return bt
-    //    }()
-    
     lazy var messageTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "입력하세요"
         tf.backgroundColor = .white
-        //        tf.borderStyle = .roundedRect
         tf.layer.cornerRadius = 15
         tf.layer.borderWidth = 1
         tf.layer.borderColor = UIColor.red.cgColor
@@ -94,16 +84,36 @@ class ViewController: UIViewController {
         return tf
     }()
     
+    private lazy var categoryCollection: UICollectionView = {
+        // 이건 왜 생성해야하는거지?
+        let layout = UICollectionViewFlowLayout()
+        layout.estimatedItemSize = CGSize(width: view.frame.width / 4, height: 10)
+        layout.itemSize = CGSize(width: view.frame.width / 4, height: 10)
+        layout.scrollDirection = .vertical
+        layout.minimumInteritemSpacing = 20
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.dataSource = self
+        view.delegate = self
+        
+        view.backgroundColor = .red
+        view.showsHorizontalScrollIndicator = false
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.contentInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        return view
+    }()
+        
     /// 코드 정리하기
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .black
+                
         todoTableView.dataSource = self
         todoTableView.delegate = self
-        view.backgroundColor = .black
 
         view.addSubview(todoTableView)
         todoTableView.frame = view.bounds
+        
+        view.addSubview(categoryCollection)
         
         /// 이 친구를 어디로 어떻게 배치를 해야할까?
         let stack = UIStackView(arrangedSubviews: [checkFinishedButton, messageTextField])
@@ -112,30 +122,33 @@ class ViewController: UIViewController {
         stack.spacing = 5
         stack.distribution = .fillProportionally
         
+        view.addSubview(categoryCollection)
         view.addSubview(tapBarView)
         view.addSubview(stack)
         
-//        let totalStack = UIStackView(arrangedSubviews: [tapBarView, stack])
         
-        tapBarView.bottomAnchor.constraint(equalTo: stack.bottomAnchor).isActive = true
-        tapBarView.leadingAnchor.constraint(equalTo: stack.leadingAnchor).isActive = true
-        tapBarView.trailingAnchor.constraint(equalTo: stack.trailingAnchor).isActive = true
+        tapBarView.translatesAutoresizingMaskIntoConstraints = false
+        /// 이걸 끄니까 에러가 없어졌다. 왜지??
+//        tapBarView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        tapBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        tapBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         tapBarView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        
-//        totalStack.translatesAutoresizingMaskIntoConstraints = false
-//        totalStack.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-//        totalStack.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-//        totalStack.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        
-        tapBarView.bottomAnchor.constraint(equalTo: stack.topAnchor, constant: -10).isActive = true
-        
-        textFieldBottomConstraint = stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30)
-        textFieldBottomConstraint?.isActive = true
+        tapBarView.bottomAnchor.constraint(equalTo: stack.bottomAnchor, constant: 30).isActive = true
+
         
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
+        stack.centerXAnchor.constraint(equalTo: tapBarView.centerXAnchor, constant: 0).isActive = true
         stack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15).isActive = true
         stack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15).isActive = true
+        
+        categoryCollection.bottomAnchor.constraint(equalTo: tapBarView.topAnchor, constant: 0).isActive = true
+        categoryCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        categoryCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        categoryCollection.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        categoryCollection.register(SectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        
+        textFieldBottomConstraint = tapBarView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        textFieldBottomConstraint?.isActive = true
         
         // 데이터가 저장이 되었다. > 이전에는 왜 오류가 발생했던 거지? (NSArray0 objectAtIndex:]: index 0 beyond bounds for empty NSArray)
         fetchData()
@@ -153,6 +166,11 @@ class ViewController: UIViewController {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
     }
+    
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        view.addSubview(categoryCollection)
+//    }
     
     //MARK: - UIComponent 구성 메서드
     
@@ -271,8 +289,8 @@ class ViewController: UIViewController {
         
         let keyboardHeight = keyboardSize.cgRectValue.height
         
-        if keyboardWillShow { viewBottomConstraint.constant = -(keyboardHeight + 50) }
-        else { viewBottomConstraint.constant = -30 }
+        if keyboardWillShow { viewBottomConstraint.constant = -(keyboardHeight) } // + 30
+        else { viewBottomConstraint.constant = 0 }
         
         let animator = UIViewPropertyAnimator(duration: keyboardDuration, curve: keyboardCurve) { [weak self] in
             self?.view.layoutIfNeeded()
@@ -409,6 +427,25 @@ extension ViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         messageTextField.resignFirstResponder()
     }
+}
+
+extension ViewController: UICollectionViewDelegate {
+    
+}
+
+extension ViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return data.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! SectionViewCell
+        let data = self.data[indexPath.row]
+        cell.titleLabel.text = data
+        cell.backgroundColor = .white
+        return cell
+    }
+
 }
 
 
