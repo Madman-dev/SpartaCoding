@@ -51,18 +51,18 @@ class ViewController: UIViewController {
     
     let tapBarView: UIView = {
         let view = UIView()
-        view.backgroundColor = .gray
-        view.alpha = 0.5
+        view.backgroundColor = .black
+        view.alpha = 1
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    let checkFinishedButton: UIButton = {
+    lazy var checkFinishedButton: UIButton = {
         let bt = UIButton()
         bt.setImage(UIImage(systemName: "house.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        bt.imageView?.contentMode = .scaleAspectFit
+        bt.imageView?.contentMode = .scaleToFill
         bt.backgroundColor = .blue
-        bt.layer.cornerRadius = 15
+        bt.layer.cornerRadius = 10
         bt.layer.borderWidth = 1
         bt.clipsToBounds = true
         bt.addTarget(self, action: #selector(checkFinishedTapped), for: .touchUpInside)
@@ -70,42 +70,59 @@ class ViewController: UIViewController {
         return bt
     }()
     
+    lazy var sendButton: UIButton = {
+        let bt = UIButton()
+        bt.translatesAutoresizingMaskIntoConstraints = false
+//        bt.backgroundColor = .white
+        bt.setTitle("전송", for: .normal)
+        bt.setTitleColor(.black, for: .normal)
+        bt.addTarget(self, action: #selector(addTodoTapped), for: .touchUpInside)
+        return bt
+    }()
+    
     lazy var messageTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "입력하세요"
         tf.backgroundColor = .white
-        tf.layer.cornerRadius = 15
+        tf.layer.cornerRadius = 10
         tf.layer.borderWidth = 1
         tf.layer.borderColor = UIColor.red.cgColor
         tf.layer.masksToBounds = true
-        tf.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        tf.heightAnchor.constraint(equalToConstant: 35).isActive = true
         tf.delegate = self
         tf.autocorrectionType = .no
         return tf
     }()
     
-    private lazy var categoryCollection: UICollectionView = {
-        // 이건 왜 생성해야하는거지?
+    // 이 친구를 생성하는 이유는?
+    private let flowLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
-        layout.estimatedItemSize = CGSize(width: view.frame.width / 4, height: 10)
-        layout.itemSize = CGSize(width: view.frame.width / 4, height: 10)
-        layout.scrollDirection = .vertical
-        layout.minimumInteritemSpacing = 20
-        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 8
+        layout.estimatedItemSize = CGSize(width: 10, height: 10)
+        return layout
+    }()
+    
+    private lazy var categoryCollection: UICollectionView = {
+        let view = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
         view.dataSource = self
         view.delegate = self
-        
+        view.isScrollEnabled = true
+        view.showsHorizontalScrollIndicator = true
+        view.showsVerticalScrollIndicator = true
         view.backgroundColor = .red
-        view.showsHorizontalScrollIndicator = false
+        view.clipsToBounds = true
+        view.contentInset = .zero
+        view.contentInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        view.register(SectionViewCell.self, forCellWithReuseIdentifier: "SectionViewCell")
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.contentInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
         return view
     }()
         
     /// 코드 정리하기
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        view.backgroundColor = .white
                 
         todoTableView.dataSource = self
         todoTableView.delegate = self
@@ -125,16 +142,14 @@ class ViewController: UIViewController {
         view.addSubview(categoryCollection)
         view.addSubview(tapBarView)
         view.addSubview(stack)
+        view.addSubview(sendButton)
         
-        
-        tapBarView.translatesAutoresizingMaskIntoConstraints = false
         /// 이걸 끄니까 에러가 없어졌다. 왜지??
 //        tapBarView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         tapBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tapBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        tapBarView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        tapBarView.heightAnchor.constraint(equalToConstant: 80).isActive = true
         tapBarView.bottomAnchor.constraint(equalTo: stack.bottomAnchor, constant: 30).isActive = true
-
         
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.centerXAnchor.constraint(equalTo: tapBarView.centerXAnchor, constant: 0).isActive = true
@@ -144,11 +159,14 @@ class ViewController: UIViewController {
         categoryCollection.bottomAnchor.constraint(equalTo: tapBarView.topAnchor, constant: 0).isActive = true
         categoryCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         categoryCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        categoryCollection.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        categoryCollection.register(SectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        categoryCollection.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         textFieldBottomConstraint = tapBarView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         textFieldBottomConstraint?.isActive = true
+        
+        sendButton.trailingAnchor.constraint(equalTo: messageTextField.trailingAnchor, constant: -10).isActive = true
+        sendButton.topAnchor.constraint(equalTo: messageTextField.topAnchor).isActive = true
+        sendButton.bottomAnchor.constraint(equalTo: messageTextField.bottomAnchor).isActive = true
         
         // 데이터가 저장이 되었다. > 이전에는 왜 오류가 발생했던 거지? (NSArray0 objectAtIndex:]: index 0 beyond bounds for empty NSArray)
         fetchData()
@@ -205,48 +223,20 @@ class ViewController: UIViewController {
     }
     
     private func addTodo() {
-        let alert = UIAlertController(title: "오늘의 Todo",
-                                      message: "무엇을 하고 싶으세요?",
-                                      preferredStyle: .alert)
+        guard let text = messageTextField.text, !text.isEmpty else { return }
         
-        alert.addTextField{ (textField) in
-            textField.placeholder = "마음껏 작성하세요!"
-        }
+        let newTodo = Todo(context: self.context)
+        newTodo.title = text
+        newTodo.id = 0
+        newTodo.isCompleted = true
+        newTodo.section = "leisure"
         
-        let saveTodo = UIAlertAction(title: "저장하기", style: .default) { (action) in
+        do {
+            try self.context.save()
+            self.fetchData()
+        } catch {
             
-            // 여기에서 발생하는 에러가 있었다. 데이터에 접근하는 방식이 안전하지 않은 것으로 보여짐
-            if let textfields = alert.textFields, let textfield = textfields.first?.text, !textfield.isEmpty {
-                let newTodo = Todo(context: self.context)
-                // 🔥 이전 데이터들은 바꿀 수 있도록 수정해보자
-                newTodo.title = textfield
-                newTodo.id = 0
-                newTodo.isCompleted = true
-                newTodo.section = "leisure"
-                newTodo.timeStamp = .now
-                
-                // 데이터 저장
-                do {
-                    try self.context.save()
-                }
-                // 🔥 에러 처리 > 일단 먼저 CRUD를 실행한 이후
-                catch {
-                    
-                }
-                
-                // refetching the data
-                self.fetchData()
-                
-            } else {
-                // 클로저가 실행됐을 때 100% 값이 있다는 것을 보장하게 된다면 참조 값을 적용하지 않을수 있도록 해야한다.
-                self.displayErrors(for: .blankTextField)
-            }
         }
-        
-        let cancel = UIAlertAction(title: "뒤로 돌아가기", style: .cancel, handler: nil)
-        alert.addAction(saveTodo)
-        alert.addAction(cancel)
-        present(alert, animated: true)
     }
     
     //MARK: - Todo에 반응하는 버튼 조절 메서드 -> 결국 적용 실패!
@@ -310,7 +300,7 @@ class ViewController: UIViewController {
     
     
     @objc func addTodoTapped(_ sender: UIButton) {
-        self.animateButton(sender)
+//        self.animateButton(sender)
         addTodo()
     }
     
@@ -350,7 +340,6 @@ extension ViewController: UITableViewDataSource {
         return Categories.allCases.count
     }
     
-    
     // 카태고리별로 더미 데이터 구성 필요 -> 각 section별로 채워질 데이터 수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todos?.count ?? 1
@@ -359,7 +348,7 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TodoViewCell
         let todo = self.todos?[indexPath.row]
-        cell.textLabel?.text = todo?.title
+        cell.titleLabel.text = todo?.title
         
         return cell
     }
@@ -403,7 +392,7 @@ extension ViewController: UITableViewDelegate {
     
     // 삭제 기능을 구현해두기는 했네... 흠...
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let action = UIContextualAction(style: .destructive, title: "삭제하기") { (action, view, completionHandler) in
+        let delete = UIContextualAction(style: .destructive, title: "삭제하기") { (action, view, completionHandler) in
             // 내가 지우고 싶은 todo를 지정하고
             let remove = self.todos?[indexPath.row]
             
@@ -419,7 +408,22 @@ extension ViewController: UITableViewDelegate {
             }
             self.fetchData()
         }
-        return UISwipeActionsConfiguration(actions: [action])
+        
+        let save = UIContextualAction(style: .normal, title: "저장") { (action, view, completionHandler) in
+            let saved = self.todos?[indexPath.row]
+            
+            if let saved = saved {
+                self.context.delete(saved)
+            }
+            do {
+                try self.context.save()
+            }
+            catch {
+                // 에러처리 해보자!
+            }
+            self.fetchData()
+        }
+        return UISwipeActionsConfiguration(actions: [delete, save])
     }
 }
 
@@ -435,17 +439,22 @@ extension ViewController: UICollectionViewDelegate {
 
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return data.count
+        return 10 //data.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! SectionViewCell
-        let data = self.data[indexPath.row]
-        cell.titleLabel.text = data
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SectionViewCell", for: indexPath) as! SectionViewCell
+//        let data = self.data[indexPath.row]
+//        cell.titleLabel.text = data
         cell.backgroundColor = .white
         return cell
     }
+}
 
+extension ViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width - 80, height: view.frame.height)
+    }
 }
 
 

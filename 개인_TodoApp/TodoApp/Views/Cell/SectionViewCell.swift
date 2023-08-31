@@ -8,6 +8,8 @@
 import UIKit
 
 class SectionViewCell: UICollectionViewCell {
+    static let id = "SectionViewCell"
+    
     var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.black
@@ -17,11 +19,15 @@ class SectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubview(titleLabel)
+        contentView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 10)
+        ])
+        
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
