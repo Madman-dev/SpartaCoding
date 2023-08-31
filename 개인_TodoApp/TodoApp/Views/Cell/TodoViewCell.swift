@@ -8,28 +8,55 @@
 import UIKit
 
 class TodoViewCell: UITableViewCell {
+    let checkButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "circle")?.withTintColor(.black).withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "circle.fill")?.withTintColor(.black).withRenderingMode(.alwaysOriginal), for: .selected)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 15
+        button.clipsToBounds = true
+        return button
+    }()
     
-    @IBOutlet weak var dateLabel: UILabel!
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
-//    var todo: Todo?
-    var todoIsComplete: Bool = false
-    
-    // 최초 cell을 세팅할 때 사용되는 기능
-    func setTodo(_ setTodo: Todo?) {
-        guard let todo = setTodo else { return }
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        if todo.isCompleted {
-            textLabel?.text = nil
-//            textLabel?.attributedText = todo.title.strikeThrough()
-            todoIsComplete = true
-        } else {
-            textLabel?.attributedText = nil
-            textLabel?.text = todo.title
-        }
-        todoIsComplete = todo.isCompleted
+        contentView.addSubview(checkButton)
+        contentView.addSubview(titleLabel)
         
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "MMM d, HH:mm"
-//        dateLabel.text = dateFormatter.string(from: todo.timeStamp)
+        NSLayoutConstraint.activate([
+            checkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            checkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            checkButton.widthAnchor.constraint(equalToConstant: 30),
+            checkButton.heightAnchor.constraint(equalToConstant: 30),
+            
+            titleLabel.leadingAnchor.constraint(equalTo: checkButton.trailingAnchor, constant: 8),
+            titleLabel.centerYAnchor.constraint(equalTo: checkButton.centerYAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+        ])
+        
+        checkButton.addTarget(self, action: #selector(checkBoxTapped), for: .touchUpInside)
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc func checkBoxTapped() {
+        print("checkbox가 눌렸습니다.")
+        checkButton.isSelected = !checkButton.isSelected
+        
+        if checkButton.isSelected {
+            contentView.alpha = 0.3
+        } else {
+            contentView.alpha = 1
+        }
+    }
+    
 }

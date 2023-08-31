@@ -10,37 +10,59 @@ import UIKit
 class FinishedController: UIViewController {
 
     //MARK: - Outlet 및 전역 변수 정리
-    let completedTableView = {
-        let tableView = UITableView(frame: UIScreen.main.bounds, style: .insetGrouped)
-        tableView.backgroundColor = .black
+    private lazy var completedTableView = {
+        let tableView = UITableView(frame: UIScreen.main.bounds, style: .plain)
+        tableView.backgroundColor = .white
         tableView.register(FinishedCell.self, forCellReuseIdentifier: "cell")
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.layer.cornerRadius = 20
         return tableView
     }()
     
     let returnButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .white
-        button.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
-        button.setTitle("돌아가기", for: .normal)
-        button.setTitleColor(UIColor.blue, for: .normal)
+        button.backgroundColor = .orange
         button.setImage(UIImage(named: "arrowshape.backward.fill"), for: .normal)
         button.addTarget(self, action: #selector(returnButtonTapped), for: .touchUpInside)
+        button.layer.cornerRadius = 25
+        button.clipsToBounds = true
         return button
+    }()
+    
+    let imageView = {
+        let imageView = UIImageView()
+        // URL로 이미지를 지정
+        imageView.load(url: URL(string: "https://spartacodingclub.kr/css/images/scc-og.jpg")!)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleToFill
+        imageView.backgroundColor = .white
+        return imageView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        completedTableView.frame = view.bounds
         
-        completedTableView.dataSource = self
-        completedTableView.delegate = self
-        
+        view.addSubview(imageView)
+        imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+
         view.addSubview(completedTableView)
+        completedTableView.topAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
+        completedTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+        completedTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+        completedTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50).isActive = true
+
         view.addSubview(returnButton)
-        returnButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100).isActive = true
-        returnButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 100).isActive = true
+        returnButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        returnButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        returnButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        returnButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 10).isActive = true
         
         completedTableView.reloadData()
     }
@@ -54,12 +76,16 @@ extension FinishedController: UITableViewDelegate {
 //MARK: - UITableViewDataSource
 extension FinishedController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return Categories.allCases.count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! FinishedCell
-        cell.backgroundColor = .blue
+        cell.backgroundColor = .orange
         cell.textLabel?.textColor = .red
         return cell
     }
@@ -76,6 +102,22 @@ extension FinishedController: UITableViewDataSource {
 
 
 //MARK: - Findings
+
+
+extension UIImageView {
+    func load(url: URL) {
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self?.image = image
+                    }
+                }
+            }
+        }
+    }
+}
+
 /*
  
  button.titleLabel?.text = "이게 올라간건가" >> setTitle만으로 값이 결정되는게 맞네 -> 예전이랑 달라진 구조?

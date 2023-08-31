@@ -2,7 +2,7 @@
 //  Todo+CoreDataProperties.swift
 //  TodoApp
 //
-//  Created by Jack Lee on 2023/08/28.
+//  Created by Jack Lee on 2023/08/31.
 //
 //
 
@@ -18,11 +18,11 @@ extension Todo {
 
     @NSManaged public var id: Int64
     @NSManaged public var isCompleted: Bool
-    @NSManaged public var section: String
-    @NSManaged public var timeStamp: Date?
+    @NSManaged public var section: String?
     @NSManaged public var title: String?
+
 }
 
 extension Todo : Identifiable {
-    
+
 }
