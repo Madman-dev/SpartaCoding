@@ -19,14 +19,6 @@ import CoreData
  */
 /// Userdefault를 대체하는 데이터 베이스를 활용해보기 or 후발대 강의처럼 클로저를 활용해보는 것으로
 
-
-/*
- 오늘 코드로 무엇을 바꿀 것인가?
- 1. Fully implment programmatic code
- 2. draw UI similiar to my previous design
- */
-
-
 class ViewController: UIViewController {
     
     //MARK: - Outlet 및 전역 변수 정리
@@ -38,6 +30,8 @@ class ViewController: UIViewController {
     let data: [String] = [
         "Leisure", "Work", "Personal"
     ]
+    var selectedCategory: Categories?
+    var todosByCategory: [Categories: [Todo]] = [:]
 
     
     /// 코드로 구성한 테이블 뷰와 버튼들을 어떻게 하면 쉽게 구성할 수 있을까?
@@ -90,6 +84,7 @@ class ViewController: UIViewController {
         tf.layer.masksToBounds = true
         tf.heightAnchor.constraint(equalToConstant: 35).isActive = true
         tf.delegate = self
+        tf.addTarget(self, action: #selector(textFieldDidBeginEditing(_:)), for: .editingDidBegin)
         tf.autocorrectionType = .no
         return tf
     }()
@@ -141,8 +136,8 @@ class ViewController: UIViewController {
         
         view.addSubview(categoryCollection)
         view.addSubview(tapBarView)
-        view.addSubview(stack)
-        view.addSubview(sendButton)
+        tapBarView.addSubview(stack)
+        tapBarView.addSubview(sendButton)
         
         /// 이걸 끄니까 에러가 없어졌다. 왜지??
 //        tapBarView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -168,6 +163,8 @@ class ViewController: UIViewController {
         sendButton.topAnchor.constraint(equalTo: messageTextField.topAnchor).isActive = true
         sendButton.bottomAnchor.constraint(equalTo: messageTextField.bottomAnchor).isActive = true
         
+        sendButton.isHidden = true
+        
         // 데이터가 저장이 되었다. > 이전에는 왜 오류가 발생했던 거지? (NSArray0 objectAtIndex:]: index 0 beyond bounds for empty NSArray)
         fetchData()
     }
@@ -189,18 +186,6 @@ class ViewController: UIViewController {
 //        super.viewDidLayoutSubviews()
 //        view.addSubview(categoryCollection)
 //    }
-    
-    //MARK: - UIComponent 구성 메서드
-    
-    // 버튼 bounceBack 효과
-    fileprivate func animateButton(_ viewToAnimate: UIView) {
-        UIView.animate(withDuration: 0.15, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: .curveEaseIn, animations: { viewToAnimate.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-        }) { (_) in
-            UIView.animate(withDuration: 0.15, delay: 0, usingSpringWithDamping: 0.4, initialSpringVelocity: 2, options: .curveEaseIn, animations: { viewToAnimate.transform = CGAffineTransform(scaleX: 1, y: 1) }
-                           , completion: nil)
-        }
-    }
-    
     
     //MARK: - 에러 대처
     private func displayErrors(for errorType: Errors) {
@@ -241,27 +226,13 @@ class ViewController: UIViewController {
     
     //MARK: - Todo에 반응하는 버튼 조절 메서드 -> 결국 적용 실패!
     
-    //    fileprivate func updateButton() {
-    //        let numberOfTodos = min(TodoManager.list.count, 10)
-    //        let ratio = CGFloat(numberOfTodos) / 10.0
-    //
-    //        let newButtonWidth = ratio * checkFinished.frame.size.width
-    //        let newButton2Width = (1.0 - ratio) * addTodoButton.frame.size.width
-    //
-    //        buttonAWidth = newButtonWidth
-    //        buttonBWidth = newButton2Width
-    //
-    //        UIView.animate(withDuration: 0.3) {
-    //            self.addTodoButton.frame.size.width = self.buttonAWidth
-    //            self.checkFinished.frame.size.width = self.buttonBWidth
-    //        }
-    //    }
+    @objc func textFieldDidBeginEditing(_ textField: UITextField) {
+        sendButton.isHidden = false
+    }
     
     @objc func keyboardWillShow(_ notification: NSNotification) {
         if messageTextField.isEditing {
-            updateViewWithKeyboard(notification: notification,
-                                   viewBottomConstraint: self.textFieldBottomConstraint!,
-                                   keyboardWillShow: true)
+            updateViewWithKeyboard(notification: notification, viewBottomConstraint: self.textFieldBottomConstraint!, keyboardWillShow: true)
         }
     }
     
@@ -269,9 +240,7 @@ class ViewController: UIViewController {
         updateViewWithKeyboard(notification: notification, viewBottomConstraint: self.textFieldBottomConstraint!, keyboardWillShow: false)
     }
     
-    func updateViewWithKeyboard(notification: NSNotification,
-                                viewBottomConstraint: NSLayoutConstraint,
-                                keyboardWillShow: Bool) {
+    func updateViewWithKeyboard(notification: NSNotification, viewBottomConstraint: NSLayoutConstraint, keyboardWillShow: Bool) {
         guard let userInfo = notification.userInfo,
               let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         guard let keyboardDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else { return }
@@ -279,7 +248,7 @@ class ViewController: UIViewController {
         
         let keyboardHeight = keyboardSize.cgRectValue.height
         
-        if keyboardWillShow { viewBottomConstraint.constant = -(keyboardHeight) } // + 30
+        if keyboardWillShow { viewBottomConstraint.constant = -(keyboardHeight) }
         else { viewBottomConstraint.constant = 0 }
         
         let animator = UIViewPropertyAnimator(duration: keyboardDuration, curve: keyboardCurve) { [weak self] in
@@ -292,7 +261,8 @@ class ViewController: UIViewController {
     //MARK: - IBAction
     
     @objc func checkFinishedTapped(_ sender: UIButton) {
-        animateButton(sender)
+        // 이게 괜찮은지 확인해보자!
+        sender.animateButton(sender)
         let destination = FinishedController()
         destination.modalPresentationStyle = .fullScreen
         self.present(destination, animated: true)
@@ -300,7 +270,7 @@ class ViewController: UIViewController {
     
     
     @objc func addTodoTapped(_ sender: UIButton) {
-//        self.animateButton(sender)
+        sender.animateButton(sender)
         addTodo()
     }
     
@@ -338,18 +308,23 @@ extension ViewController: UITableViewDataSource {
     // 카테고리 구분
     func numberOfSections(in tableView: UITableView) -> Int {
         return Categories.allCases.count
+//        return todosByCategory[selectedCategory!]?.count ?? 0
     }
     
-    // 카태고리별로 더미 데이터 구성 필요 -> 각 section별로 채워질 데이터 수
+    // 각 section별로 채워질 데이터 수
+    // Check if the section matches the selected category, and return the number of todos accordingly
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return todos?.count ?? 1
+        if Categories.allCases[section] == selectedCategory {
+            return todos?.count ?? 0
+        } else {
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TodoViewCell
         let todo = self.todos?[indexPath.row]
         cell.titleLabel.text = todo?.title
-        
         return cell
     }
     
@@ -439,15 +414,23 @@ extension ViewController: UICollectionViewDelegate {
 
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10 //data.count
+        return Categories.allCases.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SectionViewCell", for: indexPath) as! SectionViewCell
-//        let data = self.data[indexPath.row]
-//        cell.titleLabel.text = data
-        cell.backgroundColor = .white
+        let category = Categories.allCases[indexPath.item]
+        cell.titleLabel.text = category.rawValue
+//        cell.backgroundColor = .white
+        // 이건 왜 적용하는걸까?
+        cell.isSelected = (category == selectedCategory)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedCategory = Categories.allCases[indexPath.item]
+        // 왜 제외하니까 사이즈 조절이 없어지지?
+        // collectionView.reloadData()
     }
 }
 
@@ -456,7 +439,6 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: view.frame.width - 80, height: view.frame.height)
     }
 }
-
 
 // MARK: - Findings
 /*
