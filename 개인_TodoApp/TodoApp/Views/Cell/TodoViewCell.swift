@@ -51,6 +51,7 @@ class TodoViewCell: UITableViewCell {
     @objc func checkBoxTapped() {
         print("checkbox가 눌렸습니다.")
         checkButton.isSelected = !checkButton.isSelected
+        checkButton.animateButton(self)
         
         if checkButton.isSelected {
             contentView.alpha = 0.3
