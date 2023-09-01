@@ -18,7 +18,7 @@ extension UIView {
     }
 }
 
-//MARK: - UIView 확장
+//MARK: - UIImageView 확장
 extension UIImageView {
     func load(url: URL) {
         DispatchQueue.global().async { [weak self] in

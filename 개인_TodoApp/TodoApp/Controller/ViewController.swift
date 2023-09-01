@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     let todoTableView = {
         let tableView = UITableView(frame: UIScreen.main.bounds, style: .insetGrouped)
         tableView.register(TodoViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.backgroundColor = .black
+        tableView.backgroundColor = .white
         return tableView
     }()
     
@@ -229,12 +229,13 @@ class ViewController: UIViewController {
     }
     
     //MARK: - Objc 메서드
-    
     @objc func checkFinishedTapped(_ sender: UIButton) {
         sender.animateButton(sender)
-        let destination = FinishedController()
-        destination.modalPresentationStyle = .fullScreen
-        self.present(destination, animated: true)
+        
+        if let navigationController = self.navigationController {
+            let destination = FinishedController()
+            navigationController.pushViewController(destination, animated: true)
+        }
     }
     
     @objc func addTodoTapped(_ sender: UIButton) {
@@ -268,8 +269,6 @@ class ViewController: UIViewController {
     @objc func keyboardWillHide(_ notification: NSNotification) {
         updateViewWithKeyboard(notification: notification, viewBottomConstraint: self.textFieldBottomConstraint!, keyboardWillShow: false)
     }
-    
-
 }
 
 //MARK: - UITableViewDataSource
@@ -283,7 +282,6 @@ extension ViewController: UITableViewDataSource {
     }
     
     // 각 section별로 채워질 데이터 수
-    // Check if the section matches the selected category, and return the number of todos accordingly
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if Categories.allCases[section] == selectedCategory {
             return todos?.count ?? 0
@@ -300,17 +298,13 @@ extension ViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // 투두를 지정하고
         let todo = self.todos![indexPath.row]
-        // alert 창을 만들어서
         let alert = UIAlertController(title: "투두 수정", message: "내용 수정", preferredStyle: .alert)
         alert.addTextField()
         
-        // 해당 alert의 textField에 접근하고
         let textField = alert.textFields![0]
         textField.text = todo.title
         
-        // alert에 버튼을 추가
         let saveButton = UIAlertAction(title: "저장", style: .default) { _ in
             let textfield = alert.textFields![0]
             todo.title = textfield.text
@@ -327,8 +321,6 @@ extension ViewController: UITableViewDataSource {
     
     // 카테고리 구분 타이틀
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        // ⭐️reach into the sction of category >> 섹션 타이틀을 새로 생성할 때마다 변경할 수 있나? -> 그러면 메시지 입력란을 카테고리 영역 하나 만들어야겠다!
-        // Categories 타입이 정확하게 뭔지 몰랐기에 rawValue를 접근할 수 없었다. String으로 지정하게 되면서 타입을 가질 수 있었던 것!
         return Categories.allCases[section].rawValue
     }
 }
@@ -336,13 +328,9 @@ extension ViewController: UITableViewDataSource {
 //MARK: - UITableViewDelegate
 extension ViewController: UITableViewDelegate {
     
-    // 삭제 기능을 구현해두기는 했네... 흠...
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .destructive, title: "삭제하기") { (action, view, completionHandler) in
-            // 내가 지우고 싶은 todo를 지정하고
             let remove = self.todos?[indexPath.row]
-            
-            // 지정된 todo를 지울 수 있도록 거쳐가야한다.
             if let remove = remove {
                 self.context.delete(remove)
             }
@@ -350,7 +338,6 @@ extension ViewController: UITableViewDelegate {
                 try self.context.save()
             }
             catch {
-                // 에러처리 해보자!
             }
             self.fetchData()
         }
@@ -377,15 +364,11 @@ extension ViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SectionViewCell", for: indexPath) as! SectionViewCell
         let category = Categories.allCases[indexPath.item]
         cell.titleLabel.text = category.rawValue
-//        cell.backgroundColor = .white
-        // 이건 왜 적용하는걸까?
         cell.isSelected = (category == selectedCategory)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedCategory = Categories.allCases[indexPath.item]
-        // 왜 제외하니까 사이즈 조절이 없어지지?
-        // collectionView.reloadData()
     }
 }
