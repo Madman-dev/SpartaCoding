@@ -12,29 +12,29 @@ class FinishedController: UIViewController {
     //MARK: - Outlet 및 전역 변수 정리
     private lazy var completedTableView = {
         let tableView = UITableView(frame: UIScreen.main.bounds, style: .plain)
-        tableView.backgroundColor = .white
-        tableView.register(FinishedCell.self, forCellReuseIdentifier: "cell")
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .red
         tableView.layer.cornerRadius = 20
+        tableView.register(FinishedCell.self, forCellReuseIdentifier: "cell")
         return tableView
     }()
     
     let returnButton = {
         let button = UIButton()
+        let image = UIImage(systemName: "arrow.down.to.line")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .orange
-        button.setImage(UIImage(named: "arrowshape.backward.fill"), for: .normal)
-        button.addTarget(self, action: #selector(returnButtonTapped), for: .touchUpInside)
         button.layer.cornerRadius = 25
         button.clipsToBounds = true
+        button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(returnButtonTapped), for: .touchUpInside)
         return button
     }()
     
     let imageView = {
         let imageView = UIImageView()
-        // URL로 이미지를 지정
         imageView.load(url: URL(string: "https://spartacodingclub.kr/css/images/scc-og.jpg")!)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleToFill
@@ -79,9 +79,9 @@ extension FinishedController: UITableViewDataSource {
         return Categories.allCases.count
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
-    }
+//    func numberOfSections(in tableView: UITableView) -> Int {
+//        return 3
+//    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! FinishedCell
@@ -99,31 +99,3 @@ extension FinishedController: UITableViewDataSource {
         self.dismiss(animated: true)
     }
 }
-
-
-//MARK: - Findings
-
-
-extension UIImageView {
-    func load(url: URL) {
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
-            }
-        }
-    }
-}
-
-/*
- 
- button.titleLabel?.text = "이게 올라간건가" >> setTitle만으로 값이 결정되는게 맞네 -> 예전이랑 달라진 구조?
- button.titleLabel?.textColor = .black
-
- 
- - 값이 들어가는 것까지는 확인했지만 inset group으로 구분을 지을 때 section 별로 어떻게 나뉠 수 있는지를 모른다!
- 
-*/

@@ -14,7 +14,7 @@ public class Todo: NSManagedObject {
     // enum 접근하기
     var category: Categories {
         get {
-            return Categories(rawValue: String(self.section!)) ?? .leisure
+            return Categories(rawValue: String(self.section!)) ?? .daily
         }
         set {
             self.section = newValue.rawValue
