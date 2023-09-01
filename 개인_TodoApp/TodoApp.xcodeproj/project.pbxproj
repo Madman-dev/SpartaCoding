@@ -11,7 +11,7 @@
 		BD0C27EE2A9B7DA5005245A2 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BD0C27EC2A9B7DA5005245A2 /* DataModel.xcdatamodeld */; };
 		BD14B08F2A9F31920056BD27 /* SectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD14B08E2A9F31920056BD27 /* SectionViewCell.swift */; };
 		BD52064D2A82684200EAF470 /* TodoViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD52064C2A82684200EAF470 /* TodoViewCell.swift */; };
-		BD5206502A827A7F00EAF470 /* String+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD52064F2A827A7F00EAF470 /* String+extension.swift */; };
+		BD5206502A827A7F00EAF470 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD52064F2A827A7F00EAF470 /* Extension.swift */; };
 		BD619C4C2A83204A00BF4EF8 /* FinishedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD619C4B2A83204A00BF4EF8 /* FinishedCell.swift */; };
 		BD8E82192A7A3B7E00474438 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E82182A7A3B7E00474438 /* AppDelegate.swift */; };
 		BD8E821B2A7A3B7E00474438 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E821A2A7A3B7E00474438 /* SceneDelegate.swift */; };
@@ -30,7 +30,7 @@
 		BD0C27ED2A9B7DA5005245A2 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		BD14B08E2A9F31920056BD27 /* SectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionViewCell.swift; sourceTree = "<group>"; };
 		BD52064C2A82684200EAF470 /* TodoViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoViewCell.swift; sourceTree = "<group>"; };
-		BD52064F2A827A7F00EAF470 /* String+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extension.swift"; sourceTree = "<group>"; };
+		BD52064F2A827A7F00EAF470 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		BD619C4B2A83204A00BF4EF8 /* FinishedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedCell.swift; sourceTree = "<group>"; };
 		BD8E82152A7A3B7E00474438 /* TodoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD8E82182A7A3B7E00474438 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -61,8 +61,6 @@
 			isa = PBXGroup;
 			children = (
 				BD52064B2A82683200EAF470 /* Cell */,
-				BD8E821C2A7A3B7E00474438 /* ViewController.swift */,
-				BD8E822E2A7A408A00474438 /* FinishedController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -80,7 +78,7 @@
 		BD52064E2A827A7000EAF470 /* Util */ = {
 			isa = PBXGroup;
 			children = (
-				BD52064F2A827A7F00EAF470 /* String+extension.swift */,
+				BD52064F2A827A7F00EAF470 /* Extension.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -107,8 +105,9 @@
 			children = (
 				BD8E82182A7A3B7E00474438 /* AppDelegate.swift */,
 				BD8E821A2A7A3B7E00474438 /* SceneDelegate.swift */,
-				BD52064A2A82682800EAF470 /* Views */,
 				BDB1B4532A81E156003AA986 /* Model */,
+				BD52064A2A82682800EAF470 /* Views */,
+				BDE0F5232AA1A2890032FA8C /* Controller */,
 				BD52064E2A827A7000EAF470 /* Util */,
 				BD8E821E2A7A3B7E00474438 /* Main.storyboard */,
 				BD8E82212A7A3B8000474438 /* Assets.xcassets */,
@@ -127,6 +126,15 @@
 				BD0C27E82A9A3D34005245A2 /* Categories.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		BDE0F5232AA1A2890032FA8C /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				BD8E821C2A7A3B7E00474438 /* ViewController.swift */,
+				BD8E822E2A7A408A00474438 /* FinishedController.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,7 +220,7 @@
 				BD52064D2A82684200EAF470 /* TodoViewCell.swift in Sources */,
 				BD0C27EE2A9B7DA5005245A2 /* DataModel.xcdatamodeld in Sources */,
 				BDDF36F92A85C4E600668ACF /* Errors.swift in Sources */,
-				BD5206502A827A7F00EAF470 /* String+extension.swift in Sources */,
+				BD5206502A827A7F00EAF470 /* Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

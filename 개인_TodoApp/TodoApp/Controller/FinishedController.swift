@@ -21,18 +21,6 @@ class FinishedController: UIViewController {
         return tableView
     }()
     
-    let returnButton = {
-        let button = UIButton()
-        let image = UIImage(systemName: "arrow.down.to.line")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .orange
-        button.layer.cornerRadius = 25
-        button.clipsToBounds = true
-        button.setImage(image, for: .normal)
-        button.addTarget(self, action: #selector(returnButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    
     let imageView = {
         let imageView = UIImageView()
         imageView.load(url: URL(string: "https://spartacodingclub.kr/css/images/scc-og.jpg")!)
@@ -57,12 +45,6 @@ class FinishedController: UIViewController {
         completedTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
         completedTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
         completedTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50).isActive = true
-
-        view.addSubview(returnButton)
-        returnButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        returnButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        returnButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        returnButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 10).isActive = true
         
         completedTableView.reloadData()
     }
@@ -79,10 +61,6 @@ extension FinishedController: UITableViewDataSource {
         return Categories.allCases.count
     }
     
-//    func numberOfSections(in tableView: UITableView) -> Int {
-//        return 3
-//    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! FinishedCell
         cell.backgroundColor = .orange
@@ -93,9 +71,5 @@ extension FinishedController: UITableViewDataSource {
     // 선택한 cell 자동 deselect
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-    @objc func returnButtonTapped() {
-        self.dismiss(animated: true)
     }
 }
