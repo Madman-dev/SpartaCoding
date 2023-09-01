@@ -7,7 +7,9 @@
 
 import Foundation
 
-enum Errors {
+enum Errors: Error {
     case blankTextField
     case tooMuchTodos
+    case unknownError
+    case noData
 }
