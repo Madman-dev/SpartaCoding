@@ -1,5 +1,8 @@
 # SpartaCoding
 
+<details closed>
+<summary> 투두 앱 💪🏻</summary>
+
 ## TodoApp
 ### 구현 기능
 - 할일 목록 추가
@@ -14,9 +17,16 @@
 
 ## MVC 패턴
 ### Model
+- Todo+CoreDataClass
+- Todo+CoreData Properties
+- Errors
+- Categories
+
 - 모델은 앱에서 구현/처리해야할 데이터가 무엇인지 정의합니다.
   해당 모델에 속해 있는 데이터의 상태가 변하면 모델에서 뷰에게 상태 변화를 알리고 controller에서 업데이트를 진행합니다.
 - 현재 앱 내에서 처리할 데이터 구조를 정의한 파일로, Errors, Categories 및 CoreData 관련 model이 정의되어 있습니다.
+- 코어 데이터를 사용하게 되면서 NSManagedObject를 처리할 CoreData를 위한 모델을 구성했습니다.
+
 
 ### Views
 - 앱에서 그리는 화면을 정의하며 표시한 데이터는 모델에서 공유 받습니다.
@@ -25,3 +35,7 @@
 ### Controller
 - 사용자의 입력을 처리하는 역할로, 받은 응답 신호로 뷰 또는 모델을 업데이트를 담당합니다.
 - ViewController, FinishedController로 정리하였습니다.
+
+
+
+</details>
